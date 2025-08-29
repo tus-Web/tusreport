@@ -1,0 +1,247 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.container::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: moveGrid 20s linear infinite;
+}
+
+@keyframes moveGrid {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(50px, 50px);
+  }
+}
+
+.content {
+  text-align: center;
+  z-index: 1;
+  position: relative;
+}
+
+.header {
+  margin-bottom: 3rem;
+  animation: fadeInDown 1s ease-out;
+}
+
+.department {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.course {
+  font-size: 2rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.comingSoon {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.comingText,
+.soonText {
+  font-size: 4rem;
+  font-weight: 900;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.soonText {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3),
+                 0 0 20px rgba(255, 255, 255, 0.5);
+  }
+  to {
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3),
+                 0 0 30px rgba(255, 255, 255, 0.8),
+                 0 0 40px rgba(255, 255, 255, 0.6);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message {
+  margin-bottom: 3rem;
+  animation: fadeIn 1.5s ease-out;
+}
+
+.message p {
+  color: white;
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.subMessage {
+  font-size: 1rem !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.userInfo {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  animation: slideUp 1s ease-out;
+}
+
+.userInfo p {
+  color: white;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.actions {
+  animation: fadeIn 2s ease-out;
+}
+
+.homeButton {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  background: white;
+  color: #667eea;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.homeButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.loading {
+  color: white;
+  font-size: 1.5rem;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@media (max-width: 768px) {
+  .department {
+    font-size: 2rem;
+  }
+
+  .course {
+    font-size: 1.5rem;
+  }
+
+  .comingText,
+  .soonText {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .department {
+    font-size: 1.5rem;
+  }
+
+  .course {
+    font-size: 1.2rem;
+  }
+
+  .comingText,
+  .soonText {
+    font-size: 2.5rem;
+  }
+
+  .message p {
+    font-size: 1rem;
+  }
+}
+
+.experimentSection {
+  margin-top: 3rem;
+  animation: fadeIn 2.5s ease-out;
+}
+
+.experimentButton {
+  font-size: 1.1rem;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 10px 30px rgba(34, 197, 94, 0.3);
+  transition: all 0.3s ease;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.experimentButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(34, 197, 94, 0.4);
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+}
