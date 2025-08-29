@@ -1,19 +1,10 @@
 import { NextResponse } from 'next/server';
-import { isFirebaseConfigured } from '@/lib/firebase-config';
+import { userService, verificationTokenService } from '@/lib/user-store';
 import { sendVerificationEmail } from '@/lib/email';
 import crypto from 'crypto';
 
 export async function POST(request: Request) {
   try {
-    // Check if Firebase is configured
-    if (!isFirebaseConfigured()) {
-      return NextResponse.json(
-        { error: 'Firebase is not configured. Please complete the setup.' },
-        { status: 503 }
-      );
-    }
-
-    const { userService, verificationTokenService } = await import('@/lib/firebase-db');
     const { email } = await request.json();
 
     if (!email) {
@@ -40,37 +31,29 @@ export async function POST(request: Request) {
       );
     }
 
-    // 既存の未使用トークンを削除
-    await verificationTokenService.deleteByUserId(user.id);
-
     // 新しい認証トークンの生成
     const verificationToken = crypto.randomBytes(32).toString('hex');
-    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24時間後
-
-    await verificationTokenService.create({
-      token: verificationToken,
-      userId: user.id,
-      expires,
-    });
+    await verificationTokenService.create(user.id, verificationToken);
 
     // 認証メールの再送信
-    const emailResult = await sendVerificationEmail(email, verificationToken);
-
-    if (!emailResult.success) {
+    try {
+      await sendVerificationEmail(email, verificationToken);
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError);
       return NextResponse.json(
-        { error: '認証メールの送信に失敗しました' },
+        { error: 'メール送信に失敗しました。しばらくしてから再度お試しください。' },
         { status: 500 }
       );
     }
 
     return NextResponse.json({
-      message: '認証メールを再送信しました'
+      message: '認証メールを再送信しました',
+      success: true,
     });
-
   } catch (error) {
     console.error('Resend verification error:', error);
     return NextResponse.json(
-      { error: '再送信処理中にエラーが発生しました' },
+      { error: '認証メールの再送信中にエラーが発生しました' },
       { status: 500 }
     );
   }

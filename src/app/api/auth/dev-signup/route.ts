@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import { isFirebaseConfigured } from '@/lib/firebase-config';
+import { userService } from '@/lib/user-store';
 
 const DEV_PASSWORD = 'tus4624';
 
@@ -14,15 +14,6 @@ export async function POST(request: Request) {
   }
 
   try {
-    // Check if Firebase is configured
-    if (!isFirebaseConfigured()) {
-      return NextResponse.json(
-        { error: 'Firebase is not configured. Please complete the setup.' },
-        { status: 503 }
-      );
-    }
-
-    const { userService } = await import('@/lib/firebase-db');
     const { devPassword } = await request.json();
 
     // 開発者パスワードの確認
@@ -33,56 +24,65 @@ export async function POST(request: Request) {
       );
     }
 
-    // テスト用のメールアドレスとパスワードを自動生成
-    const timestamp = Date.now();
-    const testEmail = `test-${timestamp}@ed.tus.ac.jp`;
-    const testPassword = 'TestPass123!'; // 固定のテストパスワード
+    // 開発用ユーザーを作成
+    const devUsers = [
+      {
+        email: 'dev1@ed.tus.ac.jp',
+        password: 'dev12345',
+        name: 'Developer 1',
+      },
+      {
+        email: 'dev2@ed.tus.ac.jp',
+        password: 'dev12345',
+        name: 'Developer 2',
+      },
+      {
+        email: 'admin@ed.tus.ac.jp',
+        password: 'admin12345',
+        name: 'Admin User',
+      },
+    ];
 
-    // 既存のテストユーザーをチェック（同じメールアドレスは作らない）
-    const existingUser = await userService.findByEmail(testEmail);
+    const createdUsers = [];
 
-    if (existingUser) {
-      // 既にある場合は新しいタイムスタンプで再試行
-      const newEmail = `test-${timestamp + 1}@ed.tus.ac.jp`;
-      const hashedPassword = await bcrypt.hash(testPassword, 10);
+    for (const userData of devUsers) {
+      // 既存ユーザーの確認
+      const existingUser = await userService.findByEmail(userData.email);
+      if (existingUser) {
+        continue; // 既に存在する場合はスキップ
+      }
 
+      // ユーザーの作成
       const user = await userService.create({
-        email: newEmail,
-        password: hashedPassword,
+        email: userData.email,
+        password: userData.password,
+        name: userData.name,
       });
-      
-      // メール認証済みにする
-      await userService.updateEmailVerified(user.id, new Date());
 
-      return NextResponse.json({
-        message: '開発モード: テストアカウントを作成しました',
-        email: newEmail,
-        testPassword: testPassword
+      // メール認証済みにする
+      await userService.verifyEmail(user.id);
+
+      createdUsers.push({
+        email: user.email,
+        name: user.name,
       });
     }
 
-    // パスワードのハッシュ化
-    const hashedPassword = await bcrypt.hash(testPassword, 10);
-
-    // テストユーザーの作成（メール認証済みとして）
-    const user = await userService.create({
-      email: testEmail,
-      password: hashedPassword,
-    });
+    // 最初のユーザー情報を自動ログイン用に返す
+    const firstUser = devUsers[0];
     
-    // メール認証済みにする
-    await userService.updateEmailVerified(user.id, new Date());
-
     return NextResponse.json({
-      message: '開発モード: テストアカウントを作成しました',
-      email: user.email,
-      testPassword: testPassword
+      message: `開発用ユーザーが作成されました`,
+      users: createdUsers,
+      note: 'これらのユーザーは既にメール認証済みです',
+      // 自動ログイン用の情報
+      email: firstUser.email,
+      testPassword: firstUser.password,
     });
-
   } catch (error) {
     console.error('Dev signup error:', error);
     return NextResponse.json(
-      { error: '開発モードでの登録処理中にエラーが発生しました' },
+      { error: '開発用ユーザーの作成中にエラーが発生しました' },
       { status: 500 }
     );
   }
