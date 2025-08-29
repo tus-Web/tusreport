@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import styles from './experiments.module.css';
+import { ClipboardButton } from '@/components/ui/clipboardButton';
 
 export default function ExperimentsPage() {
   const { data: session, status } = useSession();
@@ -31,8 +32,44 @@ export default function ExperimentsPage() {
     return null;
   }
 
-  const handleDownload = () => {
-    alert('レポートテンプレートのダウンロード機能は準備中です');
+  const handleDownload = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    const fileName = event.currentTarget.dataset.filename;
+
+    if (!fileName) {
+      // 該当ファイル名のファイルが見つからなかった場合
+      alert('ファイル名が指定されていません');
+      return;
+    }
+
+    try {
+      // APIを呼び出してファイルをダウンロード
+      const response = await fetch(`/api/files/download/${encodeURIComponent(fileName)}`);
+
+      if (!response.ok) {
+        throw new Error('ダウンロードに失敗しました');
+      }
+      
+      // レスポンスからBlobを取得
+      const blob = await response.blob();
+      
+      // ダウンロードリンクを作成
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      
+      // ダウンロードを実行
+      document.body.appendChild(link);
+      link.click();
+      
+      // クリーンアップ
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+    } catch (error: any) {
+      alert('ファイルのダウンロードに失敗しました');
+      return;
+    }
   };
 
   return (
@@ -74,6 +111,7 @@ export default function ExperimentsPage() {
                 onClick={handleDownload}
                 variant="gradient"
                 className={styles.downloadButton}
+                data-filename="I1S_gravity.xlsx"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -93,6 +131,16 @@ export default function ExperimentsPage() {
                 </svg>
                 テンプレートをダウンロード
               </Button>
+              <ClipboardButton clipboardText='test'>クリップボードにコピー</ClipboardButton>
+              <ClipboardButton clipboardText='test2'>クリップボードにコピー2</ClipboardButton>
+              <input 
+                type="file" 
+                onChange={(e) => {
+                  if (!e.target.files || e.target.files.length === 0) return;
+
+                  console.log(e.target.files[0]);
+                }}
+              />
             </CardFooter>
           </Card>
 
