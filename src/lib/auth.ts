@@ -1,7 +1,7 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { prisma } from "@/lib/prisma";
+import { isFirebaseConfigured } from "@/lib/firebase-config";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -16,11 +16,24 @@ export const authOptions: NextAuthOptions = {
           throw new Error("メールアドレスとパスワードを入力してください");
         }
 
-        const user = await prisma.user.findUnique({
-          where: {
-            email: credentials.email
+        // Check if Firebase is configured
+        if (!isFirebaseConfigured()) {
+          console.warn("Firebase is not configured. Using demo mode.");
+          // Demo mode for development - accept any credentials
+          if (credentials.email === "demo@example.com" && credentials.password === "demo123") {
+            return {
+              id: "demo-user",
+              email: "demo@example.com",
+              name: "Demo User"
+            };
           }
-        });
+          throw new Error("Firebase is not configured. Please complete the Firebase setup.");
+        }
+
+        // Import userService only when Firebase is configured
+        const { userService } = await import("@/lib/firebase-db");
+        
+        const user = await userService.findByEmail(credentials.email);
 
         if (!user || !user.password) {
           throw new Error("メールアドレスまたはパスワードが正しくありません");

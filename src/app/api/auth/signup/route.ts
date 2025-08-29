@@ -1,11 +1,20 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import { prisma } from '@/lib/prisma';
+import { isFirebaseConfigured } from '@/lib/firebase-config';
 import { sendVerificationEmail } from '@/lib/email';
 import crypto from 'crypto';
 
 export async function POST(request: Request) {
   try {
+    // Check if Firebase is configured
+    if (!isFirebaseConfigured()) {
+      return NextResponse.json(
+        { error: 'Firebase is not configured. Please complete the setup.' },
+        { status: 503 }
+      );
+    }
+
+    const { userService, verificationTokenService } = await import('@/lib/firebase-db');
     const { email, password } = await request.json();
 
     // バリデーション
@@ -34,9 +43,7 @@ export async function POST(request: Request) {
     }
 
     // 既存ユーザーのチェック
-    const existingUser = await prisma.user.findUnique({
-      where: { email }
-    });
+    const existingUser = await userService.findByEmail(email);
 
     if (existingUser) {
       return NextResponse.json(
@@ -49,23 +56,19 @@ export async function POST(request: Request) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // ユーザーの作成
-    const user = await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-      }
+    const user = await userService.create({
+      email,
+      password: hashedPassword,
     });
 
     // 認証トークンの生成
     const verificationToken = crypto.randomBytes(32).toString('hex');
     const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24時間後
 
-    await prisma.verificationToken.create({
-      data: {
-        token: verificationToken,
-        userId: user.id,
-        expires,
-      }
+    await verificationTokenService.create({
+      token: verificationToken,
+      userId: user.id,
+      expires,
     });
 
     // 認証メールの送信

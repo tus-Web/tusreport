@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import { prisma } from '@/lib/prisma';
+import { isFirebaseConfigured } from '@/lib/firebase-config';
 
 const DEV_PASSWORD = 'tus4624';
 
@@ -14,6 +14,15 @@ export async function POST(request: Request) {
   }
 
   try {
+    // Check if Firebase is configured
+    if (!isFirebaseConfigured()) {
+      return NextResponse.json(
+        { error: 'Firebase is not configured. Please complete the setup.' },
+        { status: 503 }
+      );
+    }
+
+    const { userService } = await import('@/lib/firebase-db');
     const { devPassword } = await request.json();
 
     // 開発者パスワードの確認
@@ -30,22 +39,20 @@ export async function POST(request: Request) {
     const testPassword = 'TestPass123!'; // 固定のテストパスワード
 
     // 既存のテストユーザーをチェック（同じメールアドレスは作らない）
-    const existingUser = await prisma.user.findUnique({
-      where: { email: testEmail }
-    });
+    const existingUser = await userService.findByEmail(testEmail);
 
     if (existingUser) {
       // 既にある場合は新しいタイムスタンプで再試行
       const newEmail = `test-${timestamp + 1}@ed.tus.ac.jp`;
       const hashedPassword = await bcrypt.hash(testPassword, 10);
 
-      const user = await prisma.user.create({
-        data: {
-          email: newEmail,
-          password: hashedPassword,
-          emailVerified: new Date(), // 即座に認証済みにする
-        }
+      const user = await userService.create({
+        email: newEmail,
+        password: hashedPassword,
       });
+      
+      // メール認証済みにする
+      await userService.updateEmailVerified(user.id, new Date());
 
       return NextResponse.json({
         message: '開発モード: テストアカウントを作成しました',
@@ -58,13 +65,13 @@ export async function POST(request: Request) {
     const hashedPassword = await bcrypt.hash(testPassword, 10);
 
     // テストユーザーの作成（メール認証済みとして）
-    const user = await prisma.user.create({
-      data: {
-        email: testEmail,
-        password: hashedPassword,
-        emailVerified: new Date(), // 即座に認証済みにする
-      }
+    const user = await userService.create({
+      email: testEmail,
+      password: hashedPassword,
     });
+    
+    // メール認証済みにする
+    await userService.updateEmailVerified(user.id, new Date());
 
     return NextResponse.json({
       message: '開発モード: テストアカウントを作成しました',

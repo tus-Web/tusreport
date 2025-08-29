@@ -1,10 +1,19 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { isFirebaseConfigured } from '@/lib/firebase-config';
 import { sendVerificationEmail } from '@/lib/email';
 import crypto from 'crypto';
 
 export async function POST(request: Request) {
   try {
+    // Check if Firebase is configured
+    if (!isFirebaseConfigured()) {
+      return NextResponse.json(
+        { error: 'Firebase is not configured. Please complete the setup.' },
+        { status: 503 }
+      );
+    }
+
+    const { userService, verificationTokenService } = await import('@/lib/firebase-db');
     const { email } = await request.json();
 
     if (!email) {
@@ -15,9 +24,7 @@ export async function POST(request: Request) {
     }
 
     // ユーザーの確認
-    const user = await prisma.user.findUnique({
-      where: { email }
-    });
+    const user = await userService.findByEmail(email);
 
     if (!user) {
       return NextResponse.json(
@@ -34,20 +41,16 @@ export async function POST(request: Request) {
     }
 
     // 既存の未使用トークンを削除
-    await prisma.verificationToken.deleteMany({
-      where: { userId: user.id }
-    });
+    await verificationTokenService.deleteByUserId(user.id);
 
     // 新しい認証トークンの生成
     const verificationToken = crypto.randomBytes(32).toString('hex');
     const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24時間後
 
-    await prisma.verificationToken.create({
-      data: {
-        token: verificationToken,
-        userId: user.id,
-        expires,
-      }
+    await verificationTokenService.create({
+      token: verificationToken,
+      userId: user.id,
+      expires,
     });
 
     // 認証メールの再送信
