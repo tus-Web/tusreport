@@ -1,7 +1,7 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { isFirebaseConfigured } from "@/lib/firebase-config";
+import { userService } from "@/lib/user-store";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -16,23 +16,6 @@ export const authOptions: NextAuthOptions = {
           throw new Error("メールアドレスとパスワードを入力してください");
         }
 
-        // Check if Firebase is configured
-        if (!isFirebaseConfigured()) {
-          console.warn("Firebase is not configured. Using demo mode.");
-          // Demo mode for development - accept any credentials
-          if (credentials.email === "demo@example.com" && credentials.password === "demo123") {
-            return {
-              id: "demo-user",
-              email: "demo@example.com",
-              name: "Demo User"
-            };
-          }
-          throw new Error("Firebase is not configured. Please complete the Firebase setup.");
-        }
-
-        // Import userService only when Firebase is configured
-        const { userService } = await import("@/lib/firebase-db");
-        
         const user = await userService.findByEmail(credentials.email);
 
         if (!user || !user.password) {
@@ -66,19 +49,22 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id as string;
-        session.user.email = token.email as string;
+      if (token) {
+        session.user = {
+          ...session.user,
+          id: token.id as string,
+          email: token.email as string
+        };
       }
       return session;
     }
   },
   pages: {
-    signIn: "/auth/login",
-    error: "/auth/login",
+    signIn: '/auth/login',
+    error: '/auth/error',
   },
   session: {
-    strategy: "jwt"
+    strategy: 'jwt'
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

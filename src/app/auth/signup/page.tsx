@@ -101,20 +101,29 @@ export default function SignupPage() {
       }
 
       // アカウント作成成功、自動ログイン
-      const loginResult = await signIn('credentials', {
-        email: data.email,
-        password: data.testPassword,
-        redirect: false,
-      });
+      if (data.email && data.testPassword) {
+        const loginResult = await signIn('credentials', {
+          email: data.email,
+          password: data.testPassword,
+          redirect: false,
+        });
 
-      if (loginResult?.error) {
-        throw new Error('自動ログインに失敗しました');
+        if (loginResult?.error) {
+          console.error('Auto login error:', loginResult.error);
+          alert(`開発用アカウント作成完了\nメール: ${data.email}\nパスワード: ${data.testPassword}\n\n手動でログインしてください`);
+          router.push('/auth/signin');
+        } else {
+          // ログイン成功、次のページへ
+          alert(`開発用アカウント作成完了\nメール: ${data.email}\nパスワード: ${data.testPassword}\n\n自動ログインしました`);
+          router.push('/coming-soon');
+          router.refresh();
+        }
+      } else {
+        // 作成のみ成功
+        alert('開発用アカウントが作成されました。\n詳細はコンソールをご確認ください。');
+        console.log('Created users:', data.users);
+        setShowDevModal(false);
       }
-
-      // ログイン成功、次のページへ
-      alert(`開発用アカウント作成完了\nメール: ${data.email}\nパスワード: ${data.testPassword}\n\n次のページへ移動します`);
-      router.push('/coming-soon');
-      router.refresh();
     } catch (error) {
       setDevError(error instanceof Error ? error.message : '開発者モードでの登録に失敗しました');
     }

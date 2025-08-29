@@ -1,20 +1,11 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import { isFirebaseConfigured } from '@/lib/firebase-config';
+import { userService, verificationTokenService } from '@/lib/user-store';
 import { sendVerificationEmail } from '@/lib/email';
 import crypto from 'crypto';
 
 export async function POST(request: Request) {
   try {
-    // Check if Firebase is configured
-    if (!isFirebaseConfigured()) {
-      return NextResponse.json(
-        { error: 'Firebase is not configured. Please complete the setup.' },
-        { status: 503 }
-      );
-    }
-
-    const { userService, verificationTokenService } = await import('@/lib/firebase-db');
     const { email, password } = await request.json();
 
     // バリデーション
@@ -42,9 +33,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // 既存ユーザーのチェック
+    // 既存ユーザーの確認
     const existingUser = await userService.findByEmail(email);
-
     if (existingUser) {
       return NextResponse.json(
         { error: 'このメールアドレスは既に登録されています' },
@@ -52,47 +42,32 @@ export async function POST(request: Request) {
       );
     }
 
-    // パスワードのハッシュ化
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     // ユーザーの作成
     const user = await userService.create({
       email,
-      password: hashedPassword,
+      password,
     });
 
     // 認証トークンの生成
     const verificationToken = crypto.randomBytes(32).toString('hex');
-    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24時間後
-
-    await verificationTokenService.create({
-      token: verificationToken,
-      userId: user.id,
-      expires,
-    });
+    await verificationTokenService.create(user.id, verificationToken);
 
     // 認証メールの送信
-    const emailResult = await sendVerificationEmail(email, verificationToken);
-
-    if (!emailResult.success) {
-      // メール送信に失敗した場合でも、ユーザー作成は成功しているので
-      // エラーではなく警告として扱う
-      console.error('Failed to send verification email:', emailResult.error);
-      return NextResponse.json({
-        message: 'ユーザー登録は完了しましたが、認証メールの送信に失敗しました。',
-        warning: true
-      });
+    try {
+      await sendVerificationEmail(email, verificationToken);
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError);
+      // メール送信に失敗してもユーザー登録は成功とする
     }
 
     return NextResponse.json({
-      message: 'ユーザー登録が完了しました。認証メールをご確認ください。',
-      email: user.email
+      message: 'ユーザー登録が完了しました。メールアドレスに送信された認証リンクをクリックしてください。',
+      success: true,
     });
-
   } catch (error) {
     console.error('Signup error:', error);
     return NextResponse.json(
-      { error: '登録処理中にエラーが発生しました' },
+      { error: 'ユーザー登録中にエラーが発生しました' },
       { status: 500 }
     );
   }
