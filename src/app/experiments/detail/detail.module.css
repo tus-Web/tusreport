@@ -70,6 +70,63 @@
   font-weight: bold;
   color: #333;
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.aiGenerated {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.errorCard {
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  animation: slideUp 0.6s ease-out;
+}
+
+.errorContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.errorMessage {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #c53030;
+  font-weight: 500;
+}
+
+.errorIcon {
+  color: #c53030;
+}
+
+.retryButton {
+  background: #c53030;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.retryButton:hover {
+  background: #a02626;
+  transform: translateY(-2px);
 }
 
 .codeActions {

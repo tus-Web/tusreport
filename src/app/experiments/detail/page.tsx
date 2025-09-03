@@ -14,7 +14,7 @@ interface ExperimentData {
   description: string;
   date: string;
   deadline: string;
-  texCode: string;
+  texCode?: string;
 }
 
 export default function ExperimentDetailPage() {
@@ -25,207 +25,61 @@ export default function ExperimentDetailPage() {
   
   const [experiment, setExperiment] = useState<ExperimentData | null>(null);
   const [copied, setCopied] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // 実験データの定義
-  const experimentsData: Record<string, ExperimentData> = {
+  // 実験基本データの定義
+  const experimentsBaseData: Record<string, Omit<ExperimentData, 'texCode'>> = {
     '1': {
       id: '1',
       title: '第１回 重力加速度',
       description: '自由落下実験による重力加速度の測定',
       date: '2025年4月15日',
-      deadline: '2025年4月22日',
-      texCode: `\\documentclass[11pt]{jsarticle}
-\\usepackage[dvipdfmx]{graphicx}
-\\usepackage{amsmath}
-\\usepackage{amssymb}
-\\usepackage{booktabs}
-\\usepackage{siunitx}
-
-\\title{工学基礎実験 第1回レポート\\\\重力加速度の測定}
-\\author{学籍番号: \\quad\\quad\\quad\\quad\\quad 氏名: \\quad\\quad\\quad\\quad\\quad}
-\\date{実験日: 2025年4月15日\\quad提出日: \\today}
-
-\\begin{document}
-
-\\maketitle
-
-\\section{実験目的}
-自由落下実験を通して重力加速度$g$を測定し、理論値と比較する。
-
-\\section{実験原理}
-物体が高さ$h$から自由落下する時、落下時間を$t$とすると、以下の運動方程式が成り立つ。
-
-\\begin{equation}
-h = \\frac{1}{2}gt^2
-\\end{equation}
-
-これより、重力加速度$g$は次式で求められる。
-
-\\begin{equation}
-g = \\frac{2h}{t^2}
-\\end{equation}
-
-\\section{実験装置}
-\\begin{itemize}
-    \\item 鋼球（直径\\SI{20}{mm}）
-    \\item 光電ゲート
-    \\item ストップウォッチ
-    \\item 定規（\\SI{1}{m}）
-    \\item 実験台
-\\end{itemize}
-
-\\section{実験方法}
-\\begin{enumerate}
-    \\item 光電ゲートを設置し、落下距離$h$を測定する
-    \\item 鋼球を静かに落下させ、落下時間$t$を測定する
-    \\item 異なる高さで5回ずつ測定を行う
-    \\item 各高さでの平均値を求める
-\\end{enumerate}
-
-\\section{実験結果}
-
-\\subsection{測定データ}
-\\begin{table}[h]
-\\centering
-\\caption{落下時間の測定結果}
-\\begin{tabular}{ccccccc}
-\\toprule
-高さ [m] & 1回目 [s] & 2回目 [s] & 3回目 [s] & 4回目 [s] & 5回目 [s] & 平均 [s] \\\\
-\\midrule
-0.5 & & & & & & \\\\
-1.0 & & & & & & \\\\
-1.5 & & & & & & \\\\
-2.0 & & & & & & \\\\
-\\bottomrule
-\\end{tabular}
-\\end{table}
-
-\\subsection{重力加速度の計算}
-各高さにおける重力加速度を式(2)を用いて計算する。
-
-\\begin{table}[h]
-\\centering
-\\caption{重力加速度の計算結果}
-\\begin{tabular}{ccc}
-\\toprule
-高さ [m] & 平均時間 [s] & 重力加速度 [m/s²] \\\\
-\\midrule
-0.5 & & \\\\
-1.0 & & \\\\
-1.5 & & \\\\
-2.0 & & \\\\
-\\bottomrule
-\\end{tabular}
-\\end{table}
-
-\\section{考察}
-\\begin{itemize}
-    \\item 測定された重力加速度の平均値：\\SI{}{m/s^2}
-    \\item 理論値（\\SI{9.8}{m/s^2}）との誤差：\\SI{}{\\%}
-    \\item 誤差の要因：空気抵抗、測定機器の精度、実験手法の限界など
-\\end{itemize}
-
-\\section{結論}
-自由落下実験により重力加速度$g$を測定した結果、理論値に近い値が得られた。
-誤差の要因として空気抵抗や測定精度の限界が考えられる。
-
-\\end{document}`
+      deadline: '2025年4月22日'
     },
     '2': {
       id: '2',
       title: '第２回 ヤング率の測定',
       description: 'フックの法則を用いたヤング率の測定',
       date: '2025年4月22日',
-      deadline: '2025年4月29日',
-      texCode: `\\documentclass[11pt]{jsarticle}
-\\usepackage[dvipdfmx]{graphicx}
-\\usepackage{amsmath}
-\\usepackage{amssymb}
-\\usepackage{booktabs}
-\\usepackage{siunitx}
+      deadline: '2025年4月29日'
+    },
+    '3': {
+      id: '3',
+      title: '第３回 フランク・ヘルツの実験',
+      description: '原子の励起エネルギーの測定',
+      date: '2025年4月29日',
+      deadline: '2025年5月6日'
+    }
+  };
 
-\\title{工学基礎実験 第2回レポート\\\\ヤング率の測定}
-\\author{学籍番号: \\quad\\quad\\quad\\quad\\quad 氏名: \\quad\\quad\\quad\\quad\\quad}
-\\date{実験日: 2025年4月22日\\quad提出日: \\today}
+  // Gemini APIを呼び出してTeX コードを生成
+  const generateTexCode = async (expId: string) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch('/api/generate-tex', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ experimentId: expId }),
+      });
 
-\\begin{document}
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'API呼び出しに失敗しました');
+      }
 
-\\maketitle
-
-\\section{実験目的}
-金属線の引張試験によりフックの法則を確認し、ヤング率を測定する。
-
-\\section{実験原理}
-長さ$L$、断面積$A$の金属線に荷重$F$を加えたときの伸び$\\Delta L$は、
-弾性限度内では荷重に比例する（フックの法則）。
-
-\\begin{equation}
-F = k\\Delta L
-\\end{equation}
-
-ヤング率$E$は以下の式で定義される。
-
-\\begin{equation}
-E = \\frac{\\sigma}{\\varepsilon} = \\frac{F/A}{\\Delta L/L} = \\frac{FL}{A\\Delta L}
-\\end{equation}
-
-\\section{実験装置}
-\\begin{itemize}
-    \\item 金属線（銅線、直径\\SI{0.5}{mm}）
-    \\item 荷重（分銅）
-    \\item マイクロメーター
-    \\item 定規
-    \\item 実験架台
-\\end{itemize}
-
-\\section{実験方法}
-\\begin{enumerate}
-    \\item 金属線の直径と長さを測定する
-    \\item 金属線を実験架台に固定する
-    \\item 段階的に荷重を加え、各荷重での伸びを測定する
-    \\item 荷重と伸びの関係をグラフにプロットする
-\\end{enumerate}
-
-\\section{実験結果}
-
-\\subsection{金属線の仕様}
-\\begin{itemize}
-    \\item 材質：銅
-    \\item 直径：\\SI{}{mm}
-    \\item 長さ：\\SI{}{m}
-    \\item 断面積：\\SI{}{m^2}
-\\end{itemize}
-
-\\subsection{測定データ}
-\\begin{table}[h]
-\\centering
-\\caption{荷重と伸びの測定結果}
-\\begin{tabular}{cc}
-\\toprule
-荷重 [N] & 伸び [mm] \\\\
-\\midrule
-0 & 0 \\\\
-1 & \\\\
-2 & \\\\
-3 & \\\\
-4 & \\\\
-5 & \\\\
-\\bottomrule
-\\end{tabular}
-\\end{table}
-
-\\section{考察}
-\\begin{itemize}
-    \\item 荷重と伸びの関係は直線的であり、フックの法則が成り立つことが確認できた
-    \\item 測定されたヤング率：\\SI{}{Pa}
-    \\item 銅の理論値（\\SI{110e9}{Pa}）との比較
-    \\item 誤差の要因：測定精度、材料の不均一性など
-\\end{itemize}
-
-\\section{結論}
-金属線の引張試験により、フックの法則を確認し、ヤング率を測定することができた。
-
-\\end{document}`
+      const data = await response.json();
+      return data.texCode;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'TeX コードの生成に失敗しました';
+      setError(errorMessage);
+      return null;
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -236,8 +90,16 @@ E = \\frac{\\sigma}{\\varepsilon} = \\frac{F/A}{\\Delta L/L} = \\frac{FL}{A\\Del
       return;
     }
     
-    if (experimentId && experimentsData[experimentId]) {
-      setExperiment(experimentsData[experimentId]);
+    if (experimentId && experimentsBaseData[experimentId]) {
+      const baseData = experimentsBaseData[experimentId];
+      setExperiment({ ...baseData, texCode: undefined });
+      
+      // Gemini APIを呼び出してTeX コードを生成
+      generateTexCode(experimentId).then((texCode) => {
+        if (texCode) {
+          setExperiment(prev => prev ? { ...prev, texCode } : null);
+        }
+      });
     } else {
       router.push('/experiments');
     }
@@ -269,10 +131,21 @@ E = \\frac{\\sigma}{\\varepsilon} = \\frac{F/A}{\\Delta L/L} = \\frac{FL}{A\\Del
     }
   };
 
-  if (status === 'loading') {
+  const handleRegenerateCode = async () => {
+    if (experiment && experimentId) {
+      const newTexCode = await generateTexCode(experimentId);
+      if (newTexCode) {
+        setExperiment(prev => prev ? { ...prev, texCode: newTexCode } : null);
+      }
+    }
+  };
+
+  if (status === 'loading' || loading) {
     return (
       <div className={styles.container}>
-        <div className={styles.loading}>読み込み中...</div>
+        <div className={styles.loading}>
+          {loading ? 'TeXコードを生成中...' : '読み込み中...'}
+        </div>
       </div>
     );
   }
@@ -293,83 +166,142 @@ E = \\frac{\\sigma}{\\varepsilon} = \\frac{F/A}{\\Delta L/L} = \\frac{FL}{A\\Del
           </div>
         </header>
 
-        <Card className={styles.codeCard}>
-          <CardHeader className={styles.codeHeader}>
-            <CardTitle className={styles.codeTitle}>
-              LaTeX レポートテンプレート
-            </CardTitle>
-            <div className={styles.codeActions}>
-              <Button
-                onClick={handleCopyCode}
-                variant="outline"
-                className={styles.actionButton}
-              >
-                {copied ? (
-                  <>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                    コピー済み
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
-                      <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-                    </svg>
-                    コピー
-                  </>
-                )}
-              </Button>
-              <Button
-                onClick={handleDownloadCode}
-                className={styles.downloadButton}
-              >
+        {error && (
+          <Card className={styles.errorCard}>
+            <CardContent className={styles.errorContent}>
+              <div className={styles.errorMessage}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
+                  width="20"
+                  height="20"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
+                  className={styles.errorIcon}
                 >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="7 10 12 15 17 10" />
-                  <line x1="12" y1="15" x2="12" y2="3" />
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="15" y1="9" x2="9" y2="15" />
+                  <line x1="9" y1="9" x2="15" y2="15" />
                 </svg>
-                ダウンロード
+                エラー: {error}
+              </div>
+              <Button
+                onClick={handleRegenerateCode}
+                className={styles.retryButton}
+              >
+                再試行
               </Button>
-            </div>
-          </CardHeader>
-          <CardContent className={styles.codeContent}>
-            <pre className={styles.codeBlock}>
-              <code>{experiment.texCode}</code>
-            </pre>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
+
+        {experiment.texCode && (
+          <Card className={styles.codeCard}>
+            <CardHeader className={styles.codeHeader}>
+              <CardTitle className={styles.codeTitle}>
+                LaTeX レポートテンプレート
+                <span className={styles.aiGenerated}>AI生成</span>
+              </CardTitle>
+              <div className={styles.codeActions}>
+                <Button
+                  onClick={handleRegenerateCode}
+                  variant="outline"
+                  className={styles.actionButton}
+                  disabled={loading}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                    <path d="M21 3v5h-5" />
+                    <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+                    <path d="M3 21v-5h5" />
+                  </svg>
+                  再生成
+                </Button>
+                <Button
+                  onClick={handleCopyCode}
+                  variant="outline"
+                  className={styles.actionButton}
+                >
+                  {copied ? (
+                    <>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      コピー済み
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                      </svg>
+                      コピー
+                    </>
+                  )}
+                </Button>
+                <Button
+                  onClick={handleDownloadCode}
+                  className={styles.downloadButton}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                  ダウンロード
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className={styles.codeContent}>
+              <pre className={styles.codeBlock}>
+                <code>{experiment.texCode}</code>
+              </pre>
+            </CardContent>
+          </Card>
+        )}
 
         <div className={styles.instructions}>
           <Card className={styles.instructionCard}>
