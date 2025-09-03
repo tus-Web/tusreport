@@ -31,8 +31,38 @@ export default function ExperimentsPage() {
     return null;
   }
 
-  const handleDownload = () => {
-    alert('レポートテンプレートのダウンロード機能は準備中です');
+  const experiments = [
+    {
+      id: '1',
+      title: '第１回 重力加速度',
+      description: '自由落下実験による重力加速度の測定',
+      date: '2025年4月15日',
+      deadline: '2025年4月22日',
+      status: '未提出',
+      available: true
+    },
+    {
+      id: '2',
+      title: '第２回 ヤング率の測定',
+      description: 'フックの法則を用いたヤング率の測定',
+      date: '2025年4月22日',
+      deadline: '2025年4月29日',
+      status: '未提出',
+      available: true
+    },
+    {
+      id: '3',
+      title: '第３回 Coming Soon',
+      description: '次回の実験内容は準備中です',
+      date: '',
+      deadline: '',
+      status: '',
+      available: false
+    }
+  ];
+
+  const handleExperimentClick = (experimentId: string) => {
+    router.push(`/experiments/detail?id=${experimentId}`);
   };
 
   return (
@@ -44,80 +74,66 @@ export default function ExperimentsPage() {
         </header>
 
         <div className={styles.experimentsGrid}>
-          <Card className={styles.experimentCard}>
-            <CardHeader>
-              <CardTitle className={styles.cardTitle}>
-                第１回 重力加速度
-              </CardTitle>
-              <CardDescription className={styles.cardDescription}>
-                自由落下実験による重力加速度の測定
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className={styles.cardInfo}>
-                <div className={styles.infoItem}>
-                  <span className={styles.label}>実施日:</span>
-                  <span className={styles.value}>2025年4月15日</span>
-                </div>
-                <div className={styles.infoItem}>
-                  <span className={styles.label}>提出期限:</span>
-                  <span className={styles.value}>2025年4月22日</span>
-                </div>
-                <div className={styles.infoItem}>
-                  <span className={styles.label}>ステータス:</span>
-                  <span className={styles.statusBadge}>未提出</span>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className={styles.cardFooter}>
-              <Button 
-                onClick={handleDownload}
-                variant="gradient"
-                className={styles.downloadButton}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className={styles.downloadIcon}
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="7 10 12 15 17 10" />
-                  <line x1="12" y1="15" x2="12" y2="3" />
-                </svg>
-                テンプレートをダウンロード
-              </Button>
-            </CardFooter>
-          </Card>
-
-          {/* 今後の実験用のプレースホルダー */}
-          <Card className={`${styles.experimentCard} ${styles.comingSoon}`}>
-            <CardHeader>
-              <CardTitle className={styles.cardTitle}>
-                第２回 Coming Soon
-              </CardTitle>
-              <CardDescription className={styles.cardDescription}>
-                次回の実験内容は準備中です
-              </CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card className={`${styles.experimentCard} ${styles.comingSoon}`}>
-            <CardHeader>
-              <CardTitle className={styles.cardTitle}>
-                第３回 Coming Soon
-              </CardTitle>
-              <CardDescription className={styles.cardDescription}>
-                次回の実験内容は準備中です
-              </CardDescription>
-            </CardHeader>
-          </Card>
+          {experiments.map((experiment) => (
+            <Card 
+              key={experiment.id}
+              className={`${styles.experimentCard} ${!experiment.available ? styles.comingSoon : ''}`}
+            >
+              <CardHeader>
+                <CardTitle className={styles.cardTitle}>
+                  {experiment.title}
+                </CardTitle>
+                <CardDescription className={styles.cardDescription}>
+                  {experiment.description}
+                </CardDescription>
+              </CardHeader>
+              {experiment.available && (
+                <>
+                  <CardContent>
+                    <div className={styles.cardInfo}>
+                      <div className={styles.infoItem}>
+                        <span className={styles.label}>実施日:</span>
+                        <span className={styles.value}>{experiment.date}</span>
+                      </div>
+                      <div className={styles.infoItem}>
+                        <span className={styles.label}>提出期限:</span>
+                        <span className={styles.value}>{experiment.deadline}</span>
+                      </div>
+                      <div className={styles.infoItem}>
+                        <span className={styles.label}>ステータス:</span>
+                        <span className={styles.statusBadge}>{experiment.status}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter className={styles.cardFooter}>
+                    <Button 
+                      onClick={() => handleExperimentClick(experiment.id)}
+                      variant="gradient"
+                      className={styles.downloadButton}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className={styles.downloadIcon}
+                      >
+                        <path d="M9 12l2 2 4-4" />
+                        <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3" />
+                        <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3" />
+                      </svg>
+                      レポートテンプレートを見る
+                    </Button>
+                  </CardFooter>
+                </>
+              )}
+            </Card>
+          ))}
         </div>
 
         <div className={styles.navigation}>
