@@ -2,8 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @layer base {
   :root {
+    /* カスタムカラー変数（Color.tsから） */
+    --color-background-primary: #ffffff;
+    --color-background-card: #ffffff;
+    --color-background-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --color-background-gradient-secondary: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    
+    --color-accent-primary: #10B981;
+    --color-accent-secondary: #059669;
+    --color-accent-legacy-primary: #667eea;
+    --color-accent-legacy-secondary: #764ba2;
+    
+    --color-title-primary: #FFFFFF;
+    --color-title-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    
+    --color-text-primary: #333333;
+    --color-text-secondary: #555555;
+    --color-text-muted: #666666;
+    --color-text-inverse: #FFFFFF;
+    --color-text-error: #cc0000;
+    
+    --color-subtext-primary: #6B7280;
+    --color-subtext-transparent: rgba(255, 255, 255, 0.9);
+    
+    --color-border-primary: #dddddd;
+    --color-border-focus: #667eea;
+    
+    --color-error-bg: #fee;
+    
+    /* シャドウ変数 */
+    --shadow-card: 0 20px 60px rgba(0, 0, 0, 0.3);
+    --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.3);
+    --shadow-button: 0 5px 15px rgba(102, 126, 234, 0.3);
+    --shadow-focus: 0 0 0 3px rgba(102, 126, 234, 0.1);
+
+    /* Tailwind用のオリジナル変数も保持 */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
@@ -27,6 +66,11 @@
   }
 
   .dark {
+    --color-background-primary: #0a0a0a;
+    --color-text-primary: #ededed;
+    --color-text-secondary: #cccccc;
+    --color-text-muted: #999999;
+
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;

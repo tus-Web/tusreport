@@ -4,16 +4,16 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--color-background-gradient);
 }
 
 .card {
-  background: white;
+  background: var(--color-background-card);
   border-radius: 12px;
   padding: 2rem;
   width: 100%;
   max-width: 400px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-card);
 }
 
 .title {
@@ -21,7 +21,7 @@
   font-weight: bold;
   text-align: center;
   margin-bottom: 2rem;
-  color: #333;
+  color: var(--color-text-primary);
 }
 
 .form {
