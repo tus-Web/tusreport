@@ -8,15 +8,14 @@
   overflow: hidden;
 }
 
-.container::before {
+/* .container::before {
   content: '';
   position: absolute;
   width: 200%;
   height: 200%;
   background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
   background-size: 50px 50px;
-  animation: moveGrid 20s linear infinite;
-}
+} */
 
 @keyframes moveGrid {
   0% {
@@ -35,7 +34,6 @@
 
 .header {
   margin-bottom: 3rem;
-  animation: fadeInDown 1s ease-out;
 }
 
 .department {
@@ -58,7 +56,6 @@
   justify-content: center;
   gap: 1rem;
   margin-bottom: 3rem;
-  animation: pulse 2s ease-in-out infinite;
 }
 
 .comingText,
@@ -69,10 +66,6 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
   text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
-}
-
-.soonText {
-  animation: glow 2s ease-in-out infinite alternate;
 }
 
 @keyframes pulse {
@@ -109,7 +102,6 @@
 
 .message {
   margin-bottom: 3rem;
-  animation: fadeIn 1.5s ease-out;
 }
 
 .message p {
@@ -139,7 +131,6 @@
   background: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   backdrop-filter: blur(10px);
-  animation: slideUp 1s ease-out;
 }
 
 .userInfo p {
@@ -160,7 +151,6 @@
 }
 
 .actions {
-  animation: fadeIn 2s ease-out;
 }
 
 .homeButton {
@@ -184,7 +174,87 @@
 .loading {
   color: white;
   font-size: 1.5rem;
-  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.courseSection {
+  margin-top: 3rem;
+  width: 100%;
+  max-width: 600px;
+}
+
+.courseTitle {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  margin-bottom: 2rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.courseList {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+.courseItem {
+  margin-bottom: 1.5rem;
+}
+
+.courseLink {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.2rem;
+  color: white;
+  text-decoration: none;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.courseLink:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.downloadIcon {
+  font-size: 1.5rem;
+  min-width: 1.5rem;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.courseLink:hover .downloadIcon {
+  opacity: 1;
+}
+
+.experimentSection {
+  margin-top: 3rem;
+}
+
+.experimentButton {
+  font-size: 1.1rem;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 10px 30px rgba(34, 197, 94, 0.3);
+  transition: all 0.3s ease;
+}
+
+.experimentButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(34, 197, 94, 0.4);
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
 }
 
 @media (max-width: 768px) {
@@ -199,6 +269,15 @@
   .comingText,
   .soonText {
     font-size: 3rem;
+  }
+  
+  .courseTitle {
+    font-size: 1.5rem;
+  }
+  
+  .courseLink {
+    font-size: 1rem;
+    padding: 1rem;
   }
 }
 
@@ -219,29 +298,18 @@
   .message p {
     font-size: 1rem;
   }
-}
-
-.experimentSection {
-  margin-top: 3rem;
-  animation: fadeIn 2.5s ease-out;
-}
-
-.experimentButton {
-  font-size: 1.1rem;
-  padding: 1rem 2.5rem;
-  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  box-shadow: 0 10px 30px rgba(34, 197, 94, 0.3);
-  transition: all 0.3s ease;
-  animation: pulse 2s ease-in-out infinite;
-}
-
-.experimentButton:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(34, 197, 94, 0.4);
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  
+  .courseTitle {
+    font-size: 1.3rem;
+  }
+  
+  .courseLink {
+    font-size: 0.9rem;
+    padding: 0.8rem;
+  }
+  
+  .downloadIcon {
+    font-size: 1.2rem;
+    min-width: 1.2rem;
+  }
 }
