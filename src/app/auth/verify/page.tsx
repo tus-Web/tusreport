@@ -40,7 +40,7 @@ export default function VerifyPage() {
         setStatus('success');
         setMessage('メールアドレスの認証が完了しました！');
         setTimeout(() => {
-          router.push('/coming-soon');
+          router.push('/department');
         }, 3000);
       } else {
         setStatus('error');
@@ -128,8 +128,8 @@ export default function VerifyPage() {
               <br />
               3秒後に次のページへ移動します。
             </p>
-            <Link href="/coming-soon" className={styles.button}>
-              次へ進む
+            <Link href="/department" className={styles.button}>
+              学年選択へ
             </Link>
           </>
         )}

@@ -71,6 +71,11 @@ export default function ExperimentsPage() {
         <header className={styles.header}>
           <h1 className={styles.title}>情報工学科一年</h1>
           <h2 className={styles.subtitle}>工学基礎実験</h2>
+          <div style={{ marginTop: '0.75rem' }}>
+            <Link href="/setting">
+              <Button variant="outline">設定</Button>
+            </Link>
+          </div>
         </header>
 
         <div className={styles.experimentsGrid}>
@@ -137,8 +142,8 @@ export default function ExperimentsPage() {
         </div>
 
         <div className={styles.navigation}>
-          <Link href="/coming-soon">
-            <Button variant="outline">戻る</Button>
+          <Link href="/department">
+            <Button variant="outline">学年選択へ</Button>
           </Link>
         </div>
       </div>

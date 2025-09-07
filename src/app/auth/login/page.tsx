@@ -28,7 +28,7 @@ export default function LoginPage() {
       if (result?.error) {
         setError(result.error);
       } else {
-        router.push('/coming-soon');
+        router.push('/department');
         router.refresh();
       }
     } catch (error) {

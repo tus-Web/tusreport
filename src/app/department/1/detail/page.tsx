@@ -93,15 +93,9 @@ export default function ExperimentDetailPage() {
     if (experimentId && experimentsBaseData[experimentId]) {
       const baseData = experimentsBaseData[experimentId];
       setExperiment({ ...baseData, texCode: undefined });
-      
-      // Gemini APIを呼び出してTeX コードを生成
-      generateTexCode(experimentId).then((texCode) => {
-        if (texCode) {
-          setExperiment(prev => prev ? { ...prev, texCode } : null);
-        }
-      });
+      // 自動生成は行わず、ボタンで生成する
     } else {
-      router.push('/experiments');
+      router.push('/department/1');
     }
   }, [session, status, router, experimentId]);
 
@@ -140,11 +134,20 @@ export default function ExperimentDetailPage() {
     }
   };
 
-  if (status === 'loading' || loading) {
+  const handleGenerateCode = async () => {
+    if (experimentId) {
+      const newTexCode = await generateTexCode(experimentId);
+      if (newTexCode) {
+        setExperiment(prev => prev ? { ...prev, texCode: newTexCode } : null);
+      }
+    }
+  };
+
+  if (status === 'loading') {
     return (
       <div className={styles.container}>
         <div className={styles.loading}>
-          {loading ? 'TeXコードを生成中...' : '読み込み中...'}
+          読み込み中...
         </div>
       </div>
     );
@@ -163,6 +166,20 @@ export default function ExperimentDetailPage() {
           <div className={styles.experimentInfo}>
             <span className={styles.infoItem}>実験日: {experiment.date}</span>
             <span className={styles.infoItem}>提出期限: {experiment.deadline}</span>
+          </div>
+          <div style={{ marginTop: '0.75rem', display: 'flex', gap: '0.5rem' }}>
+            <Link href="/setting">
+              <Button variant="outline">設定</Button>
+            </Link>
+            {!experiment.texCode ? (
+              <Button onClick={handleGenerateCode} disabled={loading}>
+                {loading ? 'TeXコードを生成中...' : 'TeXコードを作成'}
+              </Button>
+            ) : (
+              <Button onClick={handleRegenerateCode} variant="outline" disabled={loading}>
+                {loading ? '再生成中...' : '再生成'}
+              </Button>
+            )}
           </div>
         </header>
 
@@ -191,6 +208,7 @@ export default function ExperimentDetailPage() {
               <Button
                 onClick={handleRegenerateCode}
                 className={styles.retryButton}
+                disabled={loading}
               >
                 再試行
               </Button>
@@ -303,28 +321,26 @@ export default function ExperimentDetailPage() {
           </Card>
         )}
 
-        <div className={styles.instructions}>
-          <Card className={styles.instructionCard}>
-            <CardHeader>
-              <CardTitle className={styles.instructionTitle}>
-                使用方法
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ol className={styles.instructionList}>
-                <li>上記のLaTeXコードをコピーまたはダウンロードしてください</li>
-                <li>TeXエディタ（TeXShop、TeXstudio、Overleafなど）で開いてください</li>
-                <li>学籍番号と氏名を記入してください</li>
-                <li>実験データを測定し、該当箇所に入力してください</li>
-                <li>考察と結論を記述してください</li>
-                <li>PDFにコンパイルして提出してください</li>
-              </ol>
-            </CardContent>
-          </Card>
-        </div>
+        {!experiment.texCode && !loading && (
+          <div className={styles.instructions}>
+            <Card className={styles.instructionCard}>
+              <CardHeader>
+                <CardTitle className={styles.instructionTitle}>
+                  TeXコード未生成
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ol className={styles.instructionList}>
+                  <li>「TeXコードを作成」を押してテンプレートを生成してください</li>
+                  <li>生成後、コピーまたはダウンロードできます</li>
+                </ol>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         <div className={styles.navigation}>
-          <Link href="/experiments">
+          <Link href="/department/1">
             <Button variant="outline" className={styles.backButton}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
