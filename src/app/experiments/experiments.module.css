@@ -1,6 +1,6 @@
 .container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #ffffff;
   padding: 2rem;
 }
 
@@ -18,16 +18,14 @@
 .title {
   font-size: 2.5rem;
   font-weight: bold;
-  color: white;
+  color: #000000;
   margin-bottom: 0.5rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .subtitle {
   font-size: 2rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.95);
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  color: #000000;
 }
 
 .experimentsGrid {
@@ -121,18 +119,19 @@
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
-  font-weight: 500;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  font-weight: 600;
+  background: #000000;
+  color: #ffffff;
   border: none;
-  border-radius: 8px;
+  border-radius: 32px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
 }
 
 .downloadButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  opacity: 0.9;
 }
 
 .downloadIcon {

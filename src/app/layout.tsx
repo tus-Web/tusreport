@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AuthProvider } from "@/contexts/AuthContext";
+import Header from "@/components/Header";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,7 +28,16 @@ export default function RootLayout({
     <html lang="ja">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AuthProvider>
-          {children}
+          <div style={{minHeight: '100vh', display: 'flex', flexDirection: 'column'}}>
+            {/* Header */}
+            {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+            {/* 共通ヘッダー */}
+
+            <Header />
+            <div style={{flex: 1}}>
+              {children}
+            </div>
+          </div>
         </AuthProvider>
       </body>
     </html>

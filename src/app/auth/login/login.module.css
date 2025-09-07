@@ -4,11 +4,11 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background: var(--color-background-gradient);
+  background: #ffffff;
 }
 
 .card {
-  background: var(--color-background-card);
+  background: #ffffff;
   border-radius: 12px;
   padding: 2rem;
   width: 100%;
@@ -52,8 +52,8 @@
 
 .input:focus {
   outline: none;
-  border-color: var(--color-border-focus);
-  box-shadow: var(--shadow-focus);
+  border-color: var(--color-accent-primary);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
 .input:disabled {
@@ -72,19 +72,20 @@
 
 .button {
   padding: 0.75rem;
-  background: var(--color-background-gradient);
-  color: var(--color-title-primary);
+  background: #000000;
+  color: #ffffff;
   border: none;
-  border-radius: 6px;
+  border-radius: 32px;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
 }
 
 .button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-button);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  opacity: 0.9;
 }
 
 .button:disabled {
@@ -104,13 +105,13 @@
 }
 
 .link {
-  color: var(--color-accent-legacy-primary);
+  color: var(--color-accent-primary);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s;
 }
 
 .link:hover {
-  color: var(--color-accent-legacy-secondary);
+  color: var(--color-accent-secondary);
   text-decoration: underline;
 }

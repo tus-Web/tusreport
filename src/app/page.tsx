@@ -19,7 +19,7 @@ export default function Home() {
   // ログイン済みユーザーは自動的にcoming-soonページへリダイレクト
   useEffect(() => {
     if (status === 'authenticated' && session) {
-      router.push('/coming-soon');
+      router.push('/department');
     }
   }, [status, session, router]);
 

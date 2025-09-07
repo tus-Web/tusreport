@@ -115,7 +115,7 @@ export default function SignupPage() {
         } else {
           // ログイン成功、次のページへ
           alert(`開発用アカウント作成完了\nメール: ${data.email}\nパスワード: ${data.testPassword}\n\n自動ログインしました`);
-          router.push('/coming-soon');
+          router.push('/department');
           router.refresh();
         }
       } else {

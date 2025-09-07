@@ -1,0 +1,382 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.8); /* 背景色に透明度を適用 */
+  width: 100%;
+  height: 100%;
+}
+
+/* .container::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+} */
+
+@keyframes moveGrid {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(50px, 50px);
+  }
+}
+
+.content {
+  text-align: center;
+  z-index: 1;
+  position: relative;
+  width: 90%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8); /* 背景色に透明度を適用 */
+}
+
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.header {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between; /* 左右に分散 */
+  align-items: center;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  padding: 1.5rem 3rem;
+  width: 95%; /* 幅をさらに広げる */
+  margin: 0 auto;
+  gap: 2rem; /* 左右の要素間にギャップを追加 */
+}
+
+.hierarchy {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* 左寄せ */
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0; /* margin-bottomを削除 */
+  flex: 1; /* 左側の要素が利用可能なスペースを取る */
+}
+
+.department {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #000000; /* より濃い黒色 */
+  text-shadow: none; /* text-shadowを削除 */
+}
+
+.year {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #000000; /* より濃い黒色 */
+  text-shadow: none; /* text-shadowを削除 */
+}
+
+.course {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #000000; /* より濃い黒色 */
+  text-shadow: none; /* text-shadowを削除 */
+}
+
+.separator {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #000000; /* より濃い黒色 */
+  text-shadow: none; /* text-shadowを削除 */
+}
+
+.mainContainer {
+  width: 100%;
+  height: 100%;
+  margin-bottom: 3rem;
+  background-color: rgba(135, 249, 211, 0.2); /* 透明度を0.8から0.3に変更 */
+  border-radius: 12px;
+  padding: 1rem;
+  width: 90%;
+  margin: 0 auto;
+}
+
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3),
+                 0 0 20px rgba(255, 255, 255, 0.5);
+  }
+  to {
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3),
+                 0 0 30px rgba(255, 255, 255, 0.8),
+                 0 0 40px rgba(255, 255, 255, 0.6);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message {
+  margin-bottom: 3rem;
+}
+
+.message p {
+  color: black;
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.subMessage {
+  font-size: 1rem !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.userInfo {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.userInfo p {
+  color: black;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.actions {
+  margin-left: auto; /* 右に押し出す */
+  flex-shrink: 0; /* 右側の要素のサイズを固定 */
+}
+
+.homeButton {
+  padding: 1.2rem 3rem; /* パディングを大きく */
+  background: #000000;
+  color: white;
+  text-decoration: none;
+  border-radius: 32px;
+  font-weight: 600; /* フォントウェイトを太く */
+  font-size: 1.2rem; /* フォントサイズを大きく */
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  min-width: 150px; /* 最小幅を設定 */
+  text-align: center;
+}
+
+.homeButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  opacity: 0.8;
+}
+
+.loading {
+  color: black;
+  font-size: 1.5rem;
+}
+
+.courseSection {
+  margin-top: 3rem;
+  width: 100%;
+  max-width: 600px;
+  margin-left: auto; /* 左マージンを自動で中央配置 */
+  margin-right: auto; /* 右マージンを自動で中央配置 */
+}
+
+.courseTitle {
+  font-size: 32px;
+  font-weight: bold;
+  color: #000000; /* より濃い黒色 */
+  text-align: center;
+  margin-bottom: 2rem;
+  text-shadow: none; /* text-shadowを削除 */
+}
+
+.courseList {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+.courseItem {
+  margin-bottom: 1.5rem;
+}
+
+.courseLink {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.2rem;
+  color: #000000;
+  text-decoration: none;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.courseLink:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  border-color: rgba(135, 249, 211, 0.5);
+}
+
+.arrow {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #000000;
+  transition: all 0.3s ease;
+  opacity: 0.7;
+}
+
+.courseLink:hover .arrow {
+  opacity: 1;
+  transform: translateX(5px); /* ホバー時に矢印が右に移動 */
+  color: #22c55e; /* ホバー時に矢印の色を緑に変更 */
+}
+
+.courseLink:hover span:first-child {
+  color: #22c55e; /* ホバー時にテキストの色も緑に変更 */
+}
+
+.downloadIcon {
+  font-size: 1.5rem;
+  min-width: 1.5rem;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.courseLink:hover .downloadIcon {
+  opacity: 1;
+}
+
+.experimentSection {
+  margin-top: 3rem;
+}
+
+.experimentButton {
+  font-size: 1.1rem;
+  padding: 1rem 2.5rem;
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.experimentButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+  background: #111111;
+}
+
+@media (max-width: 768px) {
+  .department {
+    font-size: 2rem;
+  }
+
+  .course {
+    font-size: 1.5rem;
+  }
+
+  .comingText,
+  .soonText {
+    font-size: 3rem;
+  }
+  
+  .courseTitle {
+    font-size: 1.5rem;
+  }
+  
+  .courseLink {
+    font-size: 1rem;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .department {
+    font-size: 1.5rem;
+  }
+
+  .course {
+    font-size: 1.2rem;
+  }
+
+  .comingText,
+  .soonText {
+    font-size: 2.5rem;
+  }
+
+  .message p {
+    font-size: 1rem;
+  }
+  
+  .courseTitle {
+    font-size: 1.3rem;
+  }
+  
+  .courseLink {
+    font-size: 0.9rem;
+    padding: 0.8rem;
+  }
+  
+  .downloadIcon {
+    font-size: 1.2rem;
+    min-width: 1.2rem;
+  }
+}

@@ -2,7 +2,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--color-background-gradient);
+  background: #ffffff;
 }
 
 .main {
@@ -64,19 +64,20 @@
 
 .logoutButton {
   padding: 0.75rem 2rem;
-  background: var(--color-background-gradient);
-  color: var(--color-title-primary);
+  background: #000000;
+  color: #ffffff;
   border: none;
-  border-radius: 6px;
+  border-radius: 32px;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
 }
 
 .logoutButton:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-button);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  opacity: 0.9;
 }
 
 .authSection {
@@ -108,25 +109,28 @@
 }
 
 .primary {
-  background: var(--color-background-card);
-  color: var(--color-accent-legacy-primary);
-  box-shadow: var(--shadow-card);
+  background: #000000;
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  border-radius: 32px;
 }
 
 .primary:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  opacity: 0.9;
 }
 
 .secondary {
   background: transparent;
-  color: var(--color-title-primary);
-  border: 2px solid var(--color-title-primary);
+  color: #000000;
+  border: 2px solid #000000;
+  border-radius: 32px;
 }
 
 .secondary:hover {
-  background: var(--color-background-card);
-  color: var(--color-accent-legacy-primary);
+  background: #ffffff;
+  color: var(--color-accent-primary);
   transform: translateY(-2px);
 }
 
