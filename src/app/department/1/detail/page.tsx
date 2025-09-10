@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Upload } from '@/components/ui/upload';
 import styles from './detail.module.css';
 
 interface ExperimentData {
@@ -159,6 +160,12 @@ export default function ExperimentDetailPage() {
     }
   };
 
+  const handleUploadExcel = (acceptedFiles: File[]) => {
+    if (acceptedFiles.length === 0) return;
+    const file = acceptedFiles[0];
+    
+    console.log(file);
+  }
 
   if (status === 'loading') {
     return (
@@ -342,21 +349,44 @@ export default function ExperimentDetailPage() {
         )}
 
         {!experiment.texCode && !loading && (
-          <div className={styles.instructions}>
-            <Card className={styles.instructionCard}>
-              <CardHeader>
-                <CardTitle className={styles.instructionTitle}>
-                  TeXコード未生成
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ol className={styles.instructionList}>
-                  <li>「TeXコードを作成」を押してテンプレートを生成してください</li>
-                  <li>生成後、コピーまたはダウンロードできます</li>
-                </ol>
-              </CardContent>
-            </Card>
-          </div>
+          <>
+            <div className={styles.instructions}>
+              <Card className={styles.instructionCard}>
+                <CardHeader>
+                  <CardTitle className={styles.instructionTitle}>
+                    TeXコード未生成
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ol className={styles.instructionList}>
+                    <li>Excelファイルをダウンロードしてください</li>
+                    <li>ダウンロードしたファイルにデータを記入してください</li>
+                    <li>記入したExcelファイルをアップロードしてください</li>
+                    <li>「TeXコードを作成」を押してテンプレートを生成してください</li>
+                    <li>生成後、コピーまたはダウンロードできます</li>
+                  </ol>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <div className={styles.upload}>
+              <Card className={styles.uploadCard}>
+                <CardHeader>
+                  <CardTitle className={styles.uploadTitle}>
+                    Excelファイルアップロード
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Upload
+                    className={styles.uploadArea}
+                    onDrop={handleUploadExcel}
+                    accept={{ 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'] }}
+                    multiple={false}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          </>
         )}
 
         <div className={styles.navigation}>
