@@ -15,6 +15,7 @@ interface ExperimentData {
   date: string;
   deadline: string;
   texCode?: string;
+  excelFile: string;
 }
 
 export default function ExperimentDetailPage() {
@@ -35,21 +36,24 @@ export default function ExperimentDetailPage() {
       title: '第１回 重力加速度',
       description: '自由落下実験による重力加速度の測定',
       date: '2025年4月15日',
-      deadline: '2025年4月22日'
+      deadline: '2025年4月22日',
+      excelFile: '実験1重力加速度エミュレータ.xlsx'
     },
     '2': {
       id: '2',
       title: '第２回 ヤング率の測定',
       description: 'フックの法則を用いたヤング率の測定',
       date: '2025年4月22日',
-      deadline: '2025年4月29日'
+      deadline: '2025年4月29日',
+      excelFile: '実験2ヤング率の測定エミュレータ.xlsx'
     },
     '3': {
       id: '3',
       title: '第３回 フランク・ヘルツの実験',
       description: '原子の励起エネルギーの測定',
       date: '2025年4月29日',
-      deadline: '2025年5月6日'
+      deadline: '2025年5月6日',
+      excelFile: '実験3フランクヘルツの実験エミュレータ.xlsx'
     }
   };
 
@@ -143,6 +147,19 @@ export default function ExperimentDetailPage() {
     }
   };
 
+  const handleDownloadExcel = () => {
+    if (experiment?.excelFile) {
+      const fileName = experiment.excelFile;
+      const a = document.createElement('a');
+      a.href = `/api/files/download/${encodeURIComponent(fileName)}`;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  };
+
+
   if (status === 'loading') {
     return (
       <div className={styles.container}>
@@ -180,6 +197,9 @@ export default function ExperimentDetailPage() {
                 {loading ? '再生成中...' : '再生成'}
               </Button>
             )}
+            <Button onClick={handleDownloadExcel} variant="outline" disabled={loading}>
+              Excelダウンロード
+            </Button>
           </div>
         </header>
 
