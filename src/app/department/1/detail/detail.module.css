@@ -226,6 +226,35 @@
   margin-bottom: 0.5rem;
 }
 
+.upload {
+  margin-bottom: 2rem;
+  animation: slideUp 0.8s ease-out;
+}
+
+.uploadCard {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.uploadTitle {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.uploadArea {
+  border: 2px dashed #667eea;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  color: #667eea;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
 .navigation {
   display: flex;
   justify-content: center;

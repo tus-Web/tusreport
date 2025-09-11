@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Upload } from '@/components/ui/upload';
 import styles from './detail.module.css';
 
 interface ExperimentData {
@@ -15,6 +16,7 @@ interface ExperimentData {
   date: string;
   deadline: string;
   texCode?: string;
+  excelFile: string;
 }
 
 export default function ExperimentDetailPage() {
@@ -35,21 +37,24 @@ export default function ExperimentDetailPage() {
       title: '第１回 重力加速度',
       description: '自由落下実験による重力加速度の測定',
       date: '2025年4月15日',
-      deadline: '2025年4月22日'
+      deadline: '2025年4月22日',
+      excelFile: '実験1重力加速度エミュレータ.xlsx'
     },
     '2': {
       id: '2',
       title: '第２回 ヤング率の測定',
       description: 'フックの法則を用いたヤング率の測定',
       date: '2025年4月22日',
-      deadline: '2025年4月29日'
+      deadline: '2025年4月29日',
+      excelFile: '実験2ヤング率の測定エミュレータ.xlsx'
     },
     '3': {
       id: '3',
       title: '第３回 フランク・ヘルツの実験',
       description: '原子の励起エネルギーの測定',
       date: '2025年4月29日',
-      deadline: '2025年5月6日'
+      deadline: '2025年5月6日',
+      excelFile: '実験3フランクヘルツの実験エミュレータ.xlsx'
     }
   };
 
@@ -143,6 +148,25 @@ export default function ExperimentDetailPage() {
     }
   };
 
+  const handleDownloadExcel = () => {
+    if (experiment?.excelFile) {
+      const fileName = experiment.excelFile;
+      const a = document.createElement('a');
+      a.href = `/api/files/download/${encodeURIComponent(fileName)}`;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  };
+
+  const handleUploadExcel = (acceptedFiles: File[]) => {
+    if (acceptedFiles.length === 0) return;
+    const file = acceptedFiles[0];
+    
+    console.log(file);
+  }
+
   if (status === 'loading') {
     return (
       <div className={styles.container}>
@@ -180,6 +204,9 @@ export default function ExperimentDetailPage() {
                 {loading ? '再生成中...' : '再生成'}
               </Button>
             )}
+            <Button onClick={handleDownloadExcel} variant="outline" disabled={loading}>
+              Excelダウンロード
+            </Button>
           </div>
         </header>
 
@@ -322,21 +349,44 @@ export default function ExperimentDetailPage() {
         )}
 
         {!experiment.texCode && !loading && (
-          <div className={styles.instructions}>
-            <Card className={styles.instructionCard}>
-              <CardHeader>
-                <CardTitle className={styles.instructionTitle}>
-                  TeXコード未生成
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ol className={styles.instructionList}>
-                  <li>「TeXコードを作成」を押してテンプレートを生成してください</li>
-                  <li>生成後、コピーまたはダウンロードできます</li>
-                </ol>
-              </CardContent>
-            </Card>
-          </div>
+          <>
+            <div className={styles.instructions}>
+              <Card className={styles.instructionCard}>
+                <CardHeader>
+                  <CardTitle className={styles.instructionTitle}>
+                    TeXコード未生成
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ol className={styles.instructionList}>
+                    <li>Excelファイルをダウンロードしてください</li>
+                    <li>ダウンロードしたファイルにデータを記入してください</li>
+                    <li>記入したExcelファイルをアップロードしてください</li>
+                    <li>「TeXコードを作成」を押してテンプレートを生成してください</li>
+                    <li>生成後、コピーまたはダウンロードできます</li>
+                  </ol>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <div className={styles.upload}>
+              <Card className={styles.uploadCard}>
+                <CardHeader>
+                  <CardTitle className={styles.uploadTitle}>
+                    Excelファイルアップロード
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Upload
+                    className={styles.uploadArea}
+                    onDrop={handleUploadExcel}
+                    accept={{ 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'] }}
+                    multiple={false}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          </>
         )}
 
         <div className={styles.navigation}>
