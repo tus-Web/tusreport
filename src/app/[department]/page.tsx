@@ -1,6 +1,6 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
+import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Link from 'next/link';
@@ -20,18 +20,18 @@ const years = [
 ];
 
 export default function DepartmentPage() {
-  const { data: session, status } = useSession();
+  const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
 
   useEffect(() => {
     // ログインしていない場合はログインページへリダイレクト
-    if (status === 'loading') return;
-    if (!session) {
-      router.push('/auth/login');
+    if (!isLoaded) return;
+    if (!isSignedIn) {
+      router.push('/sign-in');
     }
-  }, [session, status, router]);
+  }, [isSignedIn, isLoaded, router]);
 
-  if (status === 'loading') {
+  if (!isLoaded) {
     return (
       <div className={styles.container}>
         <div className={styles.loading}>読み込み中...</div>
@@ -39,7 +39,7 @@ export default function DepartmentPage() {
     );
   }
 
-  if (!session) {
+  if (!isSignedIn) {
     return null;
   }
 

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { UserButton, SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs";
 import styles from "./Header.module.css";
 
 export default function Header() {
@@ -17,13 +18,26 @@ export default function Header() {
 
                 {/* Desktop nav */}
                 <nav className={styles.desktopNav}>
-                    <Link href="/department" className={styles.link}>情報工学科</Link>
-                    <Link href="/setting" className={styles.link}>設定</Link>
+                    <SignedIn>
+                        <Link href="/department" className={styles.link}>情報工学科</Link>
+                        <Link href="/setting" className={styles.link}>設定</Link>
+                    </SignedIn>
                 </nav>
 
                 {/* CTA (desktop) */}
                 <div className={styles.desktopCta}>
-                    <Link href="/contact" className={styles.ctaButton}>お問い合わせ</Link>
+                    <SignedOut>
+                        <SignInButton mode="modal">
+                            <button className={styles.ctaButton}>ログイン</button>
+                        </SignInButton>
+                        <SignUpButton mode="modal">
+                            <button className={styles.ctaButton}>新規登録</button>
+                        </SignUpButton>
+                    </SignedOut>
+                    <SignedIn>
+                        <Link href="/contact" className={styles.ctaButton}>お問い合わせ</Link>
+                        <UserButton afterSignOutUrl="/" />
+                    </SignedIn>
                 </div>
 
                 {/* Mobile hamburger */}
@@ -39,12 +53,22 @@ export default function Header() {
             {/* Mobile menu panel */}
             {isMenuOpen && (
                 <div className={styles.mobileMenu}>
-                    <Link href="/department" className={styles.mobileLink} onClick={() => setIsMenuOpen(false)}>Department</Link>
-                    <Link href="/setting" className={styles.mobileLink} onClick={() => setIsMenuOpen(false)}>Setting</Link>
-                    <Link href="/home" className={styles.mobileLink} onClick={() => setIsMenuOpen(false)}>Home</Link>
-                    <Link href="/setting" className={styles.mobileCta} onClick={() => setIsMenuOpen(false)}>お問い合わせ</Link>
+                    <SignedIn>
+                        <Link href="/department" className={styles.mobileLink} onClick={() => setIsMenuOpen(false)}>Department</Link>
+                        <Link href="/setting" className={styles.mobileLink} onClick={() => setIsMenuOpen(false)}>Setting</Link>
+                        <Link href="/home" className={styles.mobileLink} onClick={() => setIsMenuOpen(false)}>Home</Link>
+                        <Link href="/contact" className={styles.mobileCta} onClick={() => setIsMenuOpen(false)}>お問い合わせ</Link>
+                    </SignedIn>
+                    <SignedOut>
+                        <SignInButton mode="modal">
+                            <button className={styles.mobileCta}>ログイン</button>
+                        </SignInButton>
+                        <SignUpButton mode="modal">
+                            <button className={styles.mobileCta}>新規登録</button>
+                        </SignUpButton>
+                    </SignedOut>
                 </div>
             )}
         </header>
     );
-} 
+}

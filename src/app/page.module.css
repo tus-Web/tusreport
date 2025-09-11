@@ -22,9 +22,8 @@
 .title {
   font-size: 3rem;
   font-weight: bold;
-  color: var(--color-title-primary);
+  color: #000000;
   margin-bottom: 0.5rem;
-  text-shadow: var(--color-title-shadow);
 }
 
 .subtitle {
@@ -85,10 +84,9 @@
 }
 
 .description {
-  color: var(--color-title-primary);
+  color: #000000;
   font-size: 1.2rem;
   margin-bottom: 2rem;
-  text-shadow: var(--color-title-shadow);
 }
 
 .ctas {
@@ -146,6 +144,52 @@
   font-size: 0.9rem;
 }
 
+.authButtons {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.authButton {
+  display: inline-block;
+  padding: 1rem 3rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 32px;
+  transition: all 0.3s ease;
+  min-width: 140px;
+  text-align: center;
+}
+
+.authButton:first-child {
+  background: #000000;
+  color: #ffffff;
+  border: 2px solid #000000;
+}
+
+.authButton:first-child:hover {
+  background: #333333;
+  border-color: #333333;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.authButton:last-child {
+  background: #ffffff;
+  color: #000000;
+  border: 2px solid #000000;
+}
+
+.authButton:last-child:hover {
+  background: #000000;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
 @media (max-width: 600px) {
   .title {
     font-size: 2rem;
@@ -169,6 +213,17 @@
   }
 
   .ctas a {
+    width: 100%;
+  }
+
+  .authButtons {
+    flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+    margin: 2rem auto 0;
+  }
+
+  .authButton {
     width: 100%;
   }
 }

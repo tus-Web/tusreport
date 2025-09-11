@@ -1,27 +1,27 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
+import { useUser, useClerk } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { signOut } from 'next-auth/react';
 import { useEffect } from 'react';
 import styles from './page.module.css';
 
 export default function Home() {
-  const { data: session, status } = useSession();
+  const { isLoaded, isSignedIn, user } = useUser();
+  const { signOut } = useClerk();
   const router = useRouter();
 
   const handleLogout = async () => {
-    await signOut({ redirect: false });
-    router.push('/auth/login');
+    await signOut();
+    router.push('/');
   };
 
-  // ログイン済みユーザーは自動的にcoming-soonページへリダイレクト
+  // ログイン済みユーザーは自動的にdepartmentページへリダイレクト
   useEffect(() => {
-    if (status === 'authenticated' && session) {
+    if (isLoaded && isSignedIn) {
       router.push('/department');
     }
-  }, [status, session, router]);
+  }, [isLoaded, isSignedIn, router]);
 
   return (
     <div className={styles.page}>
@@ -31,15 +31,15 @@ export default function Home() {
           <p className={styles.subtitle}>東京理科大学レポート管理システム</p>
         </div>
 
-        {status === 'loading' ? (
+        {!isLoaded ? (
           <div className={styles.loading}>読み込み中...</div>
-        ) : session ? (
+        ) : isSignedIn ? (
           <div className={styles.userSection}>
             <div className={styles.welcomeMessage}>
-              ようこそ、{session.user?.name || session.user?.email}さん
+              ようこそ、{user?.firstName || user?.primaryEmailAddress?.emailAddress}さん
             </div>
             <div className={styles.userInfo}>
-              <p>メールアドレス: {session.user?.email}</p>
+              <p>メールアドレス: {user?.primaryEmailAddress?.emailAddress}</p>
             </div>
             <button onClick={handleLogout} className={styles.logoutButton}>
               ログアウト
@@ -48,23 +48,19 @@ export default function Home() {
         ) : (
           <div className={styles.authSection}>
             <p className={styles.description}>
-              @ed.tus.ac.jpのメールアドレスでログインしてください
+              システムを利用するにはログインが必要です
             </p>
-            <div className={styles.ctas}>
-              <Link href="/auth/login" className={styles.primary}>
+            <div className={styles.authButtons}>
+              <Link href="/sign-in" className={styles.authButton}>
                 ログイン
               </Link>
-              <Link href="/auth/signup" className={styles.secondary}>
+              <Link href="/sign-up" className={styles.authButton}>
                 新規登録
               </Link>
             </div>
           </div>
         )}
       </main>
-
-      <footer className={styles.footer}>
-        <p>&copy; 2025 TUS Report System. All rights reserved.</p>
-      </footer>
     </div>
   );
 }

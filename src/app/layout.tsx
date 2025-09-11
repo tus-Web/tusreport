@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { ClerkProvider } from '@clerk/nextjs';
 import { AuthProvider } from "@/contexts/AuthContext";
 import Header from "@/components/Header";
 import "./globals.css";
@@ -25,21 +26,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <AuthProvider>
-          <div style={{minHeight: '100vh', display: 'flex', flexDirection: 'column'}}>
-            {/* Header */}
-            {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-            {/* 共通ヘッダー */}
+    <ClerkProvider>
+      <html lang="ja">
+        <body className={`${geistSans.variable} ${geistMono.variable}`}>
+          <AuthProvider>
+            <div style={{minHeight: '100vh', display: 'flex', flexDirection: 'column'}}>
+              {/* Header */}
+              {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+              {/* 共通ヘッダー */}
 
-            <Header />
-            <div style={{flex: 1}}>
-              {children}
+              <Header />
+              <div style={{flex: 1}}>
+                {children}
+              </div>
             </div>
-          </div>
-        </AuthProvider>
-      </body>
-    </html>
+          </AuthProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

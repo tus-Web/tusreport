@@ -1,13 +1,13 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
+import { useUser } from '@clerk/nextjs';
 import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Upload } from '@/components/ui/upload';
-import styles from './detail.module.css';
+import styles from './experiment.module.css';
 
 interface ExperimentData {
   id: string;
@@ -18,7 +18,7 @@ interface ExperimentData {
 }
 
 export default function ExperimentDetailPage() {
-  const { data: session, status } = useSession();
+  const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
   const params = useParams();
   const experimentSlug = params?.experiment as string;
@@ -124,9 +124,9 @@ export default function ExperimentDetailPage() {
   };
 
   useEffect(() => {
-    if (status === 'loading') return;
-    if (!session) {
-      router.push('/auth/login');
+    if (!isLoaded) return;
+    if (!isSignedIn) {
+      router.push('/sign-in');
       return;
     }
     
@@ -202,7 +202,7 @@ export default function ExperimentDetailPage() {
     console.log(file);
   }
 
-  if (status === 'loading') {
+  if (!isLoaded) {
     return (
       <div className={styles.container}>
         <div className={styles.loading}>
@@ -212,7 +212,7 @@ export default function ExperimentDetailPage() {
     );
   }
 
-  if (!session || !experiment) {
+  if (!isSignedIn || !experiment) {
     return null;
   }
 
