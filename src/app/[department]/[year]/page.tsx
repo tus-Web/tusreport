@@ -15,11 +15,17 @@ const hierarchy = {
 
 // 授業データの配列
 const courses = [
-  { id: 1, title: '重力加速度の測定' },
-  { id: 2, title: '電気抵抗の測定' },
-  { id: 3, title: '光の干渉実験' },
-  { id: 4, title: '音波の性質' },
-  { id: 5, title: '熱伝導実験' },
+  { id: 1, title: '重力加速度', url: 'gravity' },
+  { id: 2, title: 'ヤング率の測定', url: 'youngs-modulus' },
+  { id: 3, title: 'フランク・ヘルツの実験', url: 'frank-hertz' },
+  { id: 4, title: '光の回折', url: 'light-diffraction' },
+  { id: 5, title: '電気抵抗の温度係数の計測', url: 'temperature-coefficient' },
+  { id: 6, title: '金属の融点の測定', url: 'melting-point' },
+  { id: 7, title: '放射線計測', url: 'radiation-measurement' },
+  { id: 8, title: '実体振り子', url: 'physical-pendulum' },
+  { id: 9, title: '弦の共振', url: 'string-resonance' },
+  { id: 10, title: 'オシロスコープ', url: 'oscilloscope' },
+  { id: 11, title: 'PC分解実験', url: 'pc-disassembly' }
 ];
 
 export default function Year1Page() {
@@ -52,16 +58,15 @@ export default function Year1Page() {
         <div className={styles.headerContainer}>
           <div className={styles.header}>
             <div className={styles.hierarchy}>
-              <span className={styles.department}>{hierarchy.department}</span>
+              <Link href="/department" style={{ textDecoration: 'underline' }} className={styles.departmentLink}>
+                <span className={styles.department}>{hierarchy.department}</span>
+              </Link>
               <span className={styles.separator}> ＞ </span>
-              <span className={styles.year}>{hierarchy.year}</span>
+              <Link href="/department/1" style={{ textDecoration: 'underline' }} className={styles.yearLink}>
+                <span className={styles.year}>{hierarchy.year}</span>
+              </Link>
               <span className={styles.separator}> ＞ </span>
               <span className={styles.course}>{hierarchy.course}</span>
-            </div>
-            <div className={styles.actions}>
-              <Link href="/department" className={styles.homeButton}>
-                学科へ戻る
-              </Link>
             </div>
           </div>
         </div>
@@ -72,7 +77,7 @@ export default function Year1Page() {
             <ul className={styles.courseList}>
               {courses.map((course) => (
                 <li key={course.id} className={styles.courseItem}>
-                  <Link href={`/department/1/detail?id=${course.id}`} className={styles.courseLink}>
+                  <Link href={`/department/1/${course.url}`} className={styles.courseLink}>
                     <span>{`第${course.id}回 ${course.title}`}</span>
                     <span className={styles.arrow}>→</span>
                   </Link>

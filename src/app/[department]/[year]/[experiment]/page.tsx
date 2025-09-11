@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -13,8 +13,6 @@ interface ExperimentData {
   id: string;
   title: string;
   description: string;
-  date: string;
-  deadline: string;
   texCode?: string;
   excelFile: string;
 }
@@ -22,17 +20,17 @@ interface ExperimentData {
 export default function ExperimentDetailPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const experimentId = searchParams.get('id');
+  const params = useParams();
+  const experimentSlug = params?.experiment as string;
   
   const [experiment, setExperiment] = useState<ExperimentData | null>(null);
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // 実験基本データの定義
+  // 実験基本データの定義（スラッグをキーとして管理）
   const experimentsBaseData: Record<string, Omit<ExperimentData, 'texCode'>> = {
-    '1': {
+    'gravity': {
       id: '1',
       title: '第１回 重力加速度',
       description: '自由落下実験による重力加速度の測定',
@@ -40,21 +38,58 @@ export default function ExperimentDetailPage() {
       deadline: '2025年4月22日',
       excelFile: '実験1重力加速度エミュレータ.xlsx'
     },
-    '2': {
+    'youngs-modulus': {
       id: '2',
       title: '第２回 ヤング率の測定',
       description: 'フックの法則を用いたヤング率の測定',
       date: '2025年4月22日',
       deadline: '2025年4月29日',
       excelFile: '実験2ヤング率の測定エミュレータ.xlsx'
-    },
-    '3': {
+},
+    'frank-hertz': {
       id: '3',
       title: '第３回 フランク・ヘルツの実験',
-      description: '原子の励起エネルギーの測定',
-      date: '2025年4月29日',
-      deadline: '2025年5月6日',
-      excelFile: '実験3フランクヘルツの実験エミュレータ.xlsx'
+      description: '原子の励起エネルギーの測定'
+    },
+    'light-diffraction': {
+      id: '4',
+      title: '第４回 光の回折',
+      description: '光の波長特性と回折現象の観察'
+    },
+    'temperature-coefficient': {
+      id: '5',
+      title: '第５回 電気抵抗の温度係数の計測',
+      description: '金属の電気抵抗と温度の関係性の測定'
+    },
+    'melting-point': {
+      id: '6',
+      title: '第６回 金属の融点の測定',
+      description: '金属材料の融点特性の測定'
+    },
+    'radiation-measurement': {
+      id: '7',
+      title: '第７回 放射線計測',
+      description: '放射線の検出と測定技術'
+    },
+    'physical-pendulum': {
+      id: '8',
+      title: '第８回 実体振り子',
+      description: '振り子の周期と重力加速度の関係'
+    },
+    'string-resonance': {
+      id: '9',
+      title: '第９回 弦の共振',
+      description: '弦の振動と共振現象の観察'
+    },
+    'oscilloscope': {
+      id: '10',
+      title: '第１０回 オシロスコープ',
+      description: 'オシロスコープの操作と波形観測'
+    },
+    'pc-disassembly': {
+      id: '11',
+      title: '第１１回 PC分解実験',
+      description: 'コンピューターの内部構造の理解'
     }
   };
 
@@ -95,14 +130,14 @@ export default function ExperimentDetailPage() {
       return;
     }
     
-    if (experimentId && experimentsBaseData[experimentId]) {
-      const baseData = experimentsBaseData[experimentId];
+    if (experimentSlug && experimentsBaseData[experimentSlug]) {
+      const baseData = experimentsBaseData[experimentSlug];
       setExperiment({ ...baseData, texCode: undefined });
       // 自動生成は行わず、ボタンで生成する
     } else {
       router.push('/department/1');
     }
-  }, [session, status, router, experimentId]);
+  }, [session, status, router, experimentSlug]);
 
   const handleCopyCode = async () => {
     if (experiment?.texCode) {
@@ -131,8 +166,8 @@ export default function ExperimentDetailPage() {
   };
 
   const handleRegenerateCode = async () => {
-    if (experiment && experimentId) {
-      const newTexCode = await generateTexCode(experimentId);
+    if (experiment) {
+      const newTexCode = await generateTexCode(experiment.id);
       if (newTexCode) {
         setExperiment(prev => prev ? { ...prev, texCode: newTexCode } : null);
       }
@@ -140,8 +175,8 @@ export default function ExperimentDetailPage() {
   };
 
   const handleGenerateCode = async () => {
-    if (experimentId) {
-      const newTexCode = await generateTexCode(experimentId);
+    if (experiment) {
+      const newTexCode = await generateTexCode(experiment.id);
       if (newTexCode) {
         setExperiment(prev => prev ? { ...prev, texCode: newTexCode } : null);
       }
@@ -187,14 +222,7 @@ export default function ExperimentDetailPage() {
         <header className={styles.header}>
           <h1 className={styles.title}>{experiment.title}</h1>
           <p className={styles.description}>{experiment.description}</p>
-          <div className={styles.experimentInfo}>
-            <span className={styles.infoItem}>実験日: {experiment.date}</span>
-            <span className={styles.infoItem}>提出期限: {experiment.deadline}</span>
-          </div>
-          <div style={{ marginTop: '0.75rem', display: 'flex', gap: '0.5rem' }}>
-            <Link href="/setting">
-              <Button variant="outline">設定</Button>
-            </Link>
+          <div style={{ marginTop: '0.75rem', display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
             {!experiment.texCode ? (
               <Button onClick={handleGenerateCode} disabled={loading}>
                 {loading ? 'TeXコードを生成中...' : 'TeXコードを作成'}
@@ -311,7 +339,7 @@ export default function ExperimentDetailPage() {
                         strokeLinejoin="round"
                       >
                         <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
-                        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                        <path d="M4 16c-1.1 0-2-.9-2 2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
                       </svg>
                       コピー
                     </>

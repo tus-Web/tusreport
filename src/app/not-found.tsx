@@ -11,9 +11,6 @@ export default function NotFound() {
           <Link href="/">
             <Button variant="outline">ホームへ戻る</Button>
           </Link>
-          <Link href="/department">
-            <Button>情報工学科へ</Button>
-          </Link>
         </div>
       </div>
     </main>

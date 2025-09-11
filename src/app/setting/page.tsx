@@ -34,7 +34,7 @@ export default function SettingPage() {
         <Button onClick={handleLogout} variant="outline">
           ログアウト
         </Button>
-        <Link href="/"><Button variant="outline">ホームへ戻る</Button></Link>
+        <Link href="/home"><Button variant="outline">ホームへ戻る</Button></Link>
       </div>
     </div>
   );
