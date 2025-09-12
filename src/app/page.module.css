@@ -26,6 +26,10 @@
   margin-bottom: 0.5rem;
 }
 
+.tus {
+  color: #10B981;
+}
+
 .subtitle {
   font-size: 1.2rem;
   color: var(--color-subtext-transparent);

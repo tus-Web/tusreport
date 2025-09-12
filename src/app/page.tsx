@@ -27,7 +27,10 @@ export default function Home() {
     <div className={styles.page}>
       <main className={styles.main}>
         <div className={styles.header}>
-          <h1 className={styles.title}>TUS Report System</h1>
+          <h1 className={styles.title}>
+            <span className={styles.tus}>tus</span>
+            Report
+          </h1>
           <p className={styles.subtitle}>東京理科大学レポート管理システム</p>
         </div>
 
@@ -48,7 +51,7 @@ export default function Home() {
         ) : (
           <div className={styles.authSection}>
             <p className={styles.description}>
-              システムを利用するにはログインが必要です
+              アプリを利用するにはログインが必要です
             </p>
             <div className={styles.authButtons}>
               <Link href="/sign-in" className={styles.authButton}>
