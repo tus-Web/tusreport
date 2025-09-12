@@ -19,7 +19,7 @@ export default function Home() {
   // ログイン済みユーザーは自動的にdepartmentページへリダイレクト
   useEffect(() => {
     if (isLoaded && isSignedIn) {
-      router.push('/department');
+      router.push('/home');
     }
   }, [isLoaded, isSignedIn, router]);
 
