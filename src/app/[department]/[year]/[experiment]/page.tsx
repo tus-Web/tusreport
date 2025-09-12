@@ -13,7 +13,6 @@ interface ExperimentData {
   id: string;
   title: string;
   description: string;
-  texCode?: string;
   excelFile: string;
 }
 
@@ -34,16 +33,12 @@ export default function ExperimentDetailPage() {
       id: '1',
       title: '第１回 重力加速度',
       description: '自由落下実験による重力加速度の測定',
-      date: '2025年4月15日',
-      deadline: '2025年4月22日',
       excelFile: '実験1重力加速度エミュレータ.xlsx'
     },
     'youngs-modulus': {
       id: '2',
       title: '第２回 ヤング率の測定',
       description: 'フックの法則を用いたヤング率の測定',
-      date: '2025年4月22日',
-      deadline: '2025年4月29日',
       excelFile: '実験2ヤング率の測定エミュレータ.xlsx'
 },
     'frank-hertz': {
@@ -137,7 +132,7 @@ export default function ExperimentDetailPage() {
     } else {
       router.push('/department/1');
     }
-  }, [session, status, router, experimentSlug]);
+  }, [isLoaded, isSignedIn, router, experimentSlug]);
 
   const handleCopyCode = async () => {
     if (experiment?.texCode) {
