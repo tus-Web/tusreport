@@ -125,6 +125,7 @@
   border-radius: 9999px;
   transition: all 150ms ease;
   display: inline-block;
+  margin: 8px;
 }
 
 .mobileCta {
@@ -139,6 +140,10 @@
   display: inline-block;
   text-align: center;
   margin-top: 6px;
+}
+
+.headerRight {
+  display: flex;
 }
 
 /* Hamburger menu */

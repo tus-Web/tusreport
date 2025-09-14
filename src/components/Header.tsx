@@ -34,10 +34,12 @@ export default function Header() {
                             <button className={styles.ctaButton}>新規登録</button>
                         </SignUpButton>
                     </SignedOut>
-                    <SignedIn>
-                        <Link href="/contact" className={styles.ctaButton}>お問い合わせ</Link>
-                        <UserButton afterSignOutUrl="/" />
-                    </SignedIn>
+                    <div className={styles.headerRight}>
+                        <SignedIn>
+                            <Link href="/contact" className={styles.ctaButton}>お問い合わせ</Link>
+                            <UserButton afterSignOutUrl="/" />
+                        </SignedIn>
+                    </div>
                 </div>
 
                 {/* Mobile hamburger */}
