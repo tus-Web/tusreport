@@ -13,7 +13,8 @@ interface ExperimentData {
   id: string;
   title: string;
   description: string;
-  excelFile: string;
+  excelFile?: string;
+  texCode?: string;
 }
 
 export default function ExperimentDetailPage() {
@@ -44,47 +45,56 @@ export default function ExperimentDetailPage() {
     'frank-hertz': {
       id: '3',
       title: '第３回 フランク・ヘルツの実験',
-      description: '原子の励起エネルギーの測定'
+      description: '原子の励起エネルギーの測定',
+      excelFile: '実験3フランクヘルツの実験エミュレータ.xlsx'
     },
     'light-diffraction': {
       id: '4',
       title: '第４回 光の回折',
-      description: '光の波長特性と回折現象の観察'
+      description: '光の波長特性と回折現象の観察',
+      excelFile: '実験4光の回折エミュレータ.xlsx'
     },
     'temperature-coefficient': {
       id: '5',
       title: '第５回 電気抵抗の温度係数の計測',
-      description: '金属の電気抵抗と温度の関係性の測定'
+      description: '金属の電気抵抗と温度の関係性の測定',
+      excelFile: '実験5電気抵抗の温度係数の計測エミュレータ.xlsx'
     },
     'melting-point': {
       id: '6',
       title: '第６回 金属の融点の測定',
-      description: '金属材料の融点特性の測定'
+      description: '金属材料の融点特性の測定',
+      excelFile: '実験6金属の融点の測定エミュレータ.xlsx'
     },
     'radiation-measurement': {
       id: '7',
       title: '第７回 放射線計測',
-      description: '放射線の検出と測定技術'
+      description: '放射線の検出と測定技術',
+      excelFile: '実験7放射線測定エミュレータ.xlsx'
     },
     'physical-pendulum': {
       id: '8',
       title: '第８回 実体振り子',
-      description: '振り子の周期と重力加速度の関係'
+      description: '振り子の周期と重力加速度の関係',
+      excelFile: '実験8実体振り子エミュレータ.xlsx'
     },
     'string-resonance': {
       id: '9',
       title: '第９回 弦の共振',
-      description: '弦の振動と共振現象の観察'
+      description: '弦の振動と共振現象の観察',
+      excelFile: '実験9弦の共振エミュレータ.xlsx'
     },
     'oscilloscope': {
       id: '10',
       title: '第１０回 オシロスコープ',
-      description: 'オシロスコープの操作と波形観測'
+      description: 'オシロスコープの操作と波形観測',
+      excelFile: '実験10オシロスコープエミュレータ.xlsx'
     },
     'pc-disassembly': {
       id: '11',
       title: '第１１回 PC分解実験',
-      description: 'コンピューターの内部構造の理解'
+      description: 'コンピューターの内部構造の理解',
+      excelFile: '実験11PC分解実験エミュレータ.xlsx'
     }
   };
 
@@ -127,7 +137,7 @@ export default function ExperimentDetailPage() {
     
     if (experimentSlug && experimentsBaseData[experimentSlug]) {
       const baseData = experimentsBaseData[experimentSlug];
-      setExperiment({ ...baseData, texCode: undefined });
+      setExperiment({ ...baseData });
       // 自動生成は行わず、ボタンで生成する
     } else {
       router.push('/department/1');
@@ -373,25 +383,6 @@ export default function ExperimentDetailPage() {
 
         {!experiment.texCode && !loading && (
           <>
-            <div className={styles.instructions}>
-              <Card className={styles.instructionCard}>
-                <CardHeader>
-                  <CardTitle className={styles.instructionTitle}>
-                    TeXコード未生成
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ol className={styles.instructionList}>
-                    <li>Excelファイルをダウンロードしてください</li>
-                    <li>ダウンロードしたファイルにデータを記入してください</li>
-                    <li>記入したExcelファイルをアップロードしてください</li>
-                    <li>「TeXコードを作成」を押してテンプレートを生成してください</li>
-                    <li>生成後、コピーまたはダウンロードできます</li>
-                  </ol>
-                </CardContent>
-              </Card>
-            </div>
-            
             <div className={styles.upload}>
               <Card className={styles.uploadCard}>
                 <CardHeader>
@@ -406,6 +397,55 @@ export default function ExperimentDetailPage() {
                     accept={{ 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'] }}
                     multiple={false}
                   />
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className={styles.instructions}>
+              <Card className={styles.instructionCard}>
+                <CardHeader>
+                  <CardTitle className={styles.instructionTitle}>
+                    TeXコード未生成
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className={styles.stepsContainer}>
+                    <div className={styles.stepCard}>
+                      <div className={styles.stepNumber}>1</div>
+                      <div className={styles.stepTitle}>Excelファイルを<br/>ダウンロード</div>
+                      <div className={styles.stepDescription}>
+                        実験データを記入するためのExcelファイルをダウンロードしてください
+                      </div>
+                    </div>
+                    <div className={styles.stepCard}>
+                      <div className={styles.stepNumber}>2</div>
+                      <div className={styles.stepTitle}>データを記入</div>
+                      <div className={styles.stepDescription}>
+                        ダウンロードしたファイルに実験データを記入してください
+                      </div>
+                    </div>
+                    <div className={styles.stepCard}>
+                      <div className={styles.stepNumber}>3</div>
+                      <div className={styles.stepTitle}>ファイルを<br/>アップロード</div>
+                      <div className={styles.stepDescription}>
+                        記入したExcelファイルをアップロードしてください
+                      </div>
+                    </div>
+                    <div className={styles.stepCard}>
+                      <div className={styles.stepNumber}>4</div>
+                      <div className={styles.stepTitle}>TeXコードを生成</div>
+                      <div className={styles.stepDescription}>
+                        「TeXコードを作成」ボタンを押してテンプレートを生成してください
+                      </div>
+                    </div>
+                    <div className={styles.stepCard}>
+                      <div className={styles.stepNumber}>5</div>
+                      <div className={styles.stepTitle}>コピー</div>
+                      <div className={styles.stepDescription}>
+                        生成後、コードをコピーできます
+                      </div>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </div>
