@@ -59,7 +59,7 @@ export default function ExperimentDetailPage() {
       id: '5',
       title: '第５回 電気抵抗の温度係数の計測',
       description: '金属の電気抵抗と温度の関係性の測定',
-      excelFile: '実験5電気抵抗の温度係数の計測エミュレータ.xlsx'
+      excelFile: '実験5電気抵抗と温度計数エミュレータ.xlsx'
     },
     'melting-point': {
       id: '6',
@@ -76,8 +76,8 @@ export default function ExperimentDetailPage() {
     'physical-pendulum': {
       id: '8',
       title: '第８回 実体振り子',
-      description: '振り子の周期と重力加速度の関係',
-      excelFile: '実験8実体振り子エミュレータ.xlsx'
+      description: '振り子の周期と重力加速度の関係'
+      // excelFile: '実験8実体振り子エミュレータ.xlsx' // ファイルが存在しないためコメントアウト
     },
     'string-resonance': {
       id: '9',
@@ -88,14 +88,14 @@ export default function ExperimentDetailPage() {
     'oscilloscope': {
       id: '10',
       title: '第１０回 オシロスコープ',
-      description: 'オシロスコープの操作と波形観測',
-      excelFile: '実験10オシロスコープエミュレータ.xlsx'
+      description: 'オシロスコープの操作と波形観測'
+      // excelFile: '実験10オシロスコープエミュレータ.xlsx' // ファイルが存在しないためコメントアウト
     },
     'pc-disassembly': {
       id: '11',
       title: '第１１回 PC分解実験',
-      description: 'コンピューターの内部構造の理解',
-      excelFile: '実験11PC分解実験エミュレータ.xlsx'
+      description: 'コンピューターの内部構造の理解'
+      // excelFile: '実験11PC分解実験エミュレータ.xlsx' // ファイルが存在しないためコメントアウト
     }
   }), []);
 
@@ -133,15 +133,29 @@ export default function ExperimentDetailPage() {
     }
   }, [isLoaded, isSignedIn, router, experimentSlug, experimentsBaseData]);
 
-  const handleDownloadExcel = () => {
+  const handleDownloadExcel = async () => {
     if (experiment?.excelFile) {
-      const fileName = experiment.excelFile;
-      const a = document.createElement('a');
-      a.href = `/api/files/download/${encodeURIComponent(fileName)}`;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      try {
+        const fileName = experiment.excelFile;
+        const response = await fetch(`/api/files/download/${encodeURIComponent(fileName)}`);
+        
+        if (!response.ok) {
+          throw new Error('ファイルのダウンロードに失敗しました');
+        }
+        
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error('Download error:', error);
+        alert('ファイルのダウンロードに失敗しました。しばらく時間をおいて再度お試しください。');
+      }
     }
   };
 
@@ -182,7 +196,7 @@ export default function ExperimentDetailPage() {
                 {loading ? '再生成中...' : '再生成'}
               </Button>
             )}
-            <Button onClick={handleDownloadExcel} variant="outline" disabled={loading}>
+            <Button onClick={handleDownloadExcel} variant="outline" disabled={loading || !experiment.excelFile}>
               Excelダウンロード
             </Button>
           </div>

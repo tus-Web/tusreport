@@ -15,7 +15,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // ファイルの完全パス
-    const filePath = join(process.cwd(), 'public', 'excel', fileName);
+    const filePath = join(process.cwd(), 'public', 'i-1-later', 'excel', fileName);
     
     // ファイルを読み込み
     const fileBuffer = await readFile(filePath);
