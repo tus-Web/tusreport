@@ -7,6 +7,9 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Upload } from '@/components/ui/upload';
+import { TexCodeDisplay } from '@/components/TexCodeDisplay';
+import { TexGenerationError } from '@/components/TexGenerationError';
+import { useTexGenerator } from '@/hooks/useTexGenerator';
 import styles from './experiment.module.css';
 
 interface ExperimentData {
@@ -22,11 +25,9 @@ export default function ExperimentDetailPage() {
   const router = useRouter();
   const params = useParams();
   const experimentSlug = params?.experiment as string;
+  const { loading, error, generateTexCode } = useTexGenerator();
   
   const [experiment, setExperiment] = useState<ExperimentData | null>(null);
-  const [copied, setCopied] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   // 実験基本データの定義（スラッグをキーとして管理）
   const experimentsBaseData: Record<string, Omit<ExperimentData, 'texCode'>> = {
@@ -98,33 +99,22 @@ export default function ExperimentDetailPage() {
     }
   };
 
-  // Gemini APIを呼び出してTeX コードを生成
-  const generateTexCode = async (expId: string) => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const response = await fetch('/api/generate-tex', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ experimentId: expId }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'API呼び出しに失敗しました');
+  // Gemini SDKを使用してPDFからTeX コードを生成
+  const handleGenerateCode = async () => {
+    if (experiment) {
+      const newTexCode = await generateTexCode(experiment.id);
+      if (newTexCode) {
+        setExperiment(prev => prev ? { ...prev, texCode: newTexCode } : null);
       }
+    }
+  };
 
-      const data = await response.json();
-      return data.texCode;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'TeX コードの生成に失敗しました';
-      setError(errorMessage);
-      return null;
-    } finally {
-      setLoading(false);
+  const handleRegenerateCode = async () => {
+    if (experiment) {
+      const newTexCode = await generateTexCode(experiment.id);
+      if (newTexCode) {
+        setExperiment(prev => prev ? { ...prev, texCode: newTexCode } : null);
+      }
     }
   };
 
@@ -143,50 +133,6 @@ export default function ExperimentDetailPage() {
       router.push('/department/1');
     }
   }, [isLoaded, isSignedIn, router, experimentSlug]);
-
-  const handleCopyCode = async () => {
-    if (experiment?.texCode) {
-      try {
-        await navigator.clipboard.writeText(experiment.texCode);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      } catch (err) {
-        console.error('コピーに失敗しました:', err);
-      }
-    }
-  };
-
-  const handleDownloadCode = () => {
-    if (experiment?.texCode) {
-      const blob = new Blob([experiment.texCode], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `experiment_${experiment.id}_report.tex`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-  };
-
-  const handleRegenerateCode = async () => {
-    if (experiment) {
-      const newTexCode = await generateTexCode(experiment.id);
-      if (newTexCode) {
-        setExperiment(prev => prev ? { ...prev, texCode: newTexCode } : null);
-      }
-    }
-  };
-
-  const handleGenerateCode = async () => {
-    if (experiment) {
-      const newTexCode = await generateTexCode(experiment.id);
-      if (newTexCode) {
-        setExperiment(prev => prev ? { ...prev, texCode: newTexCode } : null);
-      }
-    }
-  };
 
   const handleDownloadExcel = () => {
     if (experiment?.excelFile) {
@@ -244,141 +190,20 @@ export default function ExperimentDetailPage() {
         </header>
 
         {error && (
-          <Card className={styles.errorCard}>
-            <CardContent className={styles.errorContent}>
-              <div className={styles.errorMessage}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className={styles.errorIcon}
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="15" y1="9" x2="9" y2="15" />
-                  <line x1="9" y1="9" x2="15" y2="15" />
-                </svg>
-                エラー: {error}
-              </div>
-              <Button
-                onClick={handleRegenerateCode}
-                className={styles.retryButton}
-                disabled={loading}
-              >
-                再試行
-              </Button>
-            </CardContent>
-          </Card>
+          <TexGenerationError 
+            error={error}
+            onRetry={handleRegenerateCode}
+            isLoading={loading}
+          />
         )}
 
         {experiment.texCode && (
-          <Card className={styles.codeCard}>
-            <CardHeader className={styles.codeHeader}>
-              <CardTitle className={styles.codeTitle}>
-                LaTeX レポートテンプレート
-                <span className={styles.aiGenerated}>AI生成</span>
-              </CardTitle>
-              <div className={styles.codeActions}>
-                <Button
-                  onClick={handleRegenerateCode}
-                  variant="outline"
-                  className={styles.actionButton}
-                  disabled={loading}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
-                    <path d="M21 3v5h-5" />
-                    <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
-                    <path d="M3 21v-5h5" />
-                  </svg>
-                  再生成
-                </Button>
-                <Button
-                  onClick={handleCopyCode}
-                  variant="outline"
-                  className={styles.actionButton}
-                >
-                  {copied ? (
-                    <>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                      コピー済み
-                    </>
-                  ) : (
-                    <>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
-                        <path d="M4 16c-1.1 0-2-.9-2 2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-                      </svg>
-                      コピー
-                    </>
-                  )}
-                </Button>
-                <Button
-                  onClick={handleDownloadCode}
-                  className={styles.downloadButton}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="7 10 12 15 17 10" />
-                    <line x1="12" y1="15" x2="12" y2="3" />
-                  </svg>
-                  ダウンロード
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className={styles.codeContent}>
-              <pre className={styles.codeBlock}>
-                <code>{experiment.texCode}</code>
-              </pre>
-            </CardContent>
-          </Card>
+          <TexCodeDisplay 
+            texCode={experiment.texCode}
+            experimentId={experiment.id}
+            onRegenerate={handleRegenerateCode}
+            isLoading={loading}
+          />
         )}
 
         {!experiment.texCode && !loading && (
