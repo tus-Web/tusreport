@@ -104,11 +104,6 @@ export default function SignUpPage() {
             socialButtonsPlacement: 'bottom'
           }
         }}
-        localization={{
-          formFieldLabel__emailAddress: 'メールアドレス（@ed.tus.ac.jpのみ）',
-          formFieldInputPlaceholder__emailAddress: 'your-email@ed.tus.ac.jp',
-          formFieldError__emailAddress: '有効なメールアドレスを入力してください',
-        }}
       />
       
       <div style={{

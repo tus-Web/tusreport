@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 
-export async function GET(request: NextRequest, { params }: { params: { fileName: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ fileName: string }> }) {
   try {
     // TODO: 認証チェックを追加
 
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest, { params }: { params: { fileName
     headers.set('Content-Disposition', `attachment; filename*=UTF-8''${encodedFileName}`);
     headers.set('Content-Type', 'application/octet-stream');
     
-    return new NextResponse(fileBuffer as any, {
+    return new NextResponse(new Uint8Array(fileBuffer), {
       status: 200,
       headers,
     });

@@ -20,7 +20,7 @@ export async function POST(req: Request) {
   }
 
   // ヘッダーから署名情報を取得
-  const headerPayload = headers();
+  const headerPayload = await headers();
   const svix_id = headerPayload.get('svix-id');
   const svix_timestamp = headerPayload.get('svix-timestamp');
   const svix_signature = headerPayload.get('svix-signature');
@@ -72,7 +72,8 @@ export async function POST(req: Request) {
       
       try {
         // 不正なドメインのユーザーを削除
-        await clerkClient().users.deleteUser(id);
+        const clerk = await clerkClient();
+        await clerk.users.deleteUser(id);
         console.log(`User ${id} with email ${primaryEmail} has been deleted due to unauthorized domain`);
         
         return NextResponse.json({

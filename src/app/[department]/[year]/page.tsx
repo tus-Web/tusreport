@@ -29,7 +29,7 @@ const courses = [
 ];
 
 export default function Year1Page() {
-  const { isLoaded, isSignedIn, user } = useUser();
+  const { isLoaded, isSignedIn } = useUser();
   const router = useRouter();
 
   useEffect(() => {

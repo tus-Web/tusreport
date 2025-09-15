@@ -2,7 +2,7 @@
 
 import { useUser } from '@clerk/nextjs';
 import { useRouter, useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,7 +21,7 @@ interface ExperimentData {
 }
 
 export default function ExperimentDetailPage() {
-  const { isLoaded, isSignedIn, user } = useUser();
+  const { isLoaded, isSignedIn } = useUser();
   const router = useRouter();
   const params = useParams();
   const experimentSlug = params?.experiment as string;
@@ -30,7 +30,7 @@ export default function ExperimentDetailPage() {
   const [experiment, setExperiment] = useState<ExperimentData | null>(null);
 
   // 実験基本データの定義（スラッグをキーとして管理）
-  const experimentsBaseData: Record<string, Omit<ExperimentData, 'texCode'>> = {
+  const experimentsBaseData: Record<string, Omit<ExperimentData, 'texCode'>> = useMemo(() => ({
     'gravity': {
       id: '1',
       title: '第１回 重力加速度',
@@ -97,7 +97,7 @@ export default function ExperimentDetailPage() {
       description: 'コンピューターの内部構造の理解',
       excelFile: '実験11PC分解実験エミュレータ.xlsx'
     }
-  };
+  }), []);
 
   // Gemini SDKを使用してPDFからTeX コードを生成
   const handleGenerateCode = async () => {
@@ -131,7 +131,7 @@ export default function ExperimentDetailPage() {
     } else {
       router.push('/department/1');
     }
-  }, [isLoaded, isSignedIn, router, experimentSlug]);
+  }, [isLoaded, isSignedIn, router, experimentSlug, experimentsBaseData]);
 
   const handleDownloadExcel = () => {
     if (experiment?.excelFile) {

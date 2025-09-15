@@ -28,7 +28,6 @@ export default function RootLayout({
           <AuthProvider>
             <div style={{minHeight: '100vh', display: 'flex', flexDirection: 'column'}}>
               {/* Header */}
-              {/* eslint-disable-next-line @next/next/no-page-custom-font */}
               {/* 共通ヘッダー */}
 
               <Header />

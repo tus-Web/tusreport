@@ -20,7 +20,7 @@ const years = [
 ];
 
 export default function DepartmentPage() {
-  const { isLoaded, isSignedIn, user } = useUser();
+  const { isLoaded, isSignedIn } = useUser();
   const router = useRouter();
 
   useEffect(() => {

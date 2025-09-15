@@ -1,6 +1,3 @@
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-
 //　配列にして、mapで回す形にしたい
 const canDoList = [
   'エクセルファイルのダウンロード',

@@ -78,7 +78,6 @@ const Upload = React.forwardRef<HTMLDivElement, UploadProps>(
       isDragReject: dropzoneReject,
       isDragAccept: dropzoneAccept,
       open,
-      inputRef,
     } = useDropzone({
       accept,
       maxSize,
