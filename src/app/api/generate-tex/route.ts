@@ -3,14 +3,6 @@ import { GoogleGenAI } from '@google/genai';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const apiKey = process.env.GEMINI_API_KEY;
-
-if (!apiKey) {
-  throw new Error('GEMINI_API_KEY is not set in environment variables');
-}
-
-const genAI = new GoogleGenAI({ apiKey });
-
 // 実験IDとPDFファイルのマッピング
 const experimentPdfMap: Record<string, string> = {
   '1': '2025_工学基礎実験_重力加速度.pdf',
@@ -28,6 +20,17 @@ const experimentPdfMap: Record<string, string> = {
 
 export async function POST(request: NextRequest) {
   try {
+    // 環境変数のチェック
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: 'GEMINI_API_KEY が設定されていません' },
+        { status: 500 }
+      );
+    }
+
+    const genAI = new GoogleGenAI({ apiKey });
+
     const { experimentId } = await request.json();
 
     if (!experimentId) {
