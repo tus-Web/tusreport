@@ -22,7 +22,7 @@ export const metadata: Metadata = {
       },
     ],
     shortcut: "/assets/tus.genesis.svg",
-    apple: "/assets/tus.genesis.svg",
+    apple: "@/assets/tus.genesis.svg",
   },
 };
 
