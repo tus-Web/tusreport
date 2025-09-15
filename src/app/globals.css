@@ -130,6 +130,86 @@ a {
   text-decoration: none;
 }
 
+/* SVGアニメーション用のクラス */
+.svg-illustration {
+  animation: fadeInUp 0.8s ease-out;
+  transition: transform 0.3s ease;
+}
+
+.svg-illustration:hover {
+  transform: scale(1.05);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* カード用スタイル */
+.feature-card {
+  transition: all 0.3s ease;
+  border: 1px solid #e5e7eb;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-color: var(--color-accent-primary);
+}
+
+/* ボタンホバーエフェクト */
+.button-hover {
+  transition: all 0.2s ease;
+}
+
+.button-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* レスポンシブデザイン用のユーティリティ */
+@media (max-width: 768px) {
+  .svg-illustration {
+    max-width: 280px !important;
+  }
+  
+  .grid-responsive {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .text-responsive-title {
+    font-size: 2rem !important;
+  }
+  
+  .text-responsive-body {
+    font-size: 1rem !important;
+  }
+  
+  .padding-responsive {
+    padding: 1rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .svg-illustration {
+    max-width: 250px !important;
+  }
+  
+  .text-responsive-title {
+    font-size: 1.75rem !important;
+  }
+  
+  .padding-responsive {
+    padding: 0.75rem !important;
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
