@@ -1,18 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Noto_Sans_JP } from "next/font/google";
 import { ClerkProvider } from '@clerk/nextjs';
 import { AuthProvider } from "@/contexts/AuthContext";
 import Header from "@/components/Header";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const notoSansJP = Noto_Sans_JP({
+  variable: "--font-noto-sans-jp",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -28,7 +24,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="ja">
-        <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <body className={`${notoSansJP.variable}`}>
           <AuthProvider>
             <div style={{minHeight: '100vh', display: 'flex', flexDirection: 'column'}}>
               {/* Header */}

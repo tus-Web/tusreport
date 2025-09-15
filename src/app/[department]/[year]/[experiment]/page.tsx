@@ -405,7 +405,7 @@ export default function ExperimentDetailPage() {
               <Card className={styles.instructionCard}>
                 <CardHeader>
                   <CardTitle className={styles.instructionTitle}>
-                    TeXコード未生成
+                    使い方の手順
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
