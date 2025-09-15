@@ -60,10 +60,17 @@ export default function DepartmentPage() {
             <ul className={styles.courseList}>
               {years.map((year) => (
                 <li key={year.id} className={styles.courseItem}>
-                  <Link href={`/department/${year.id}`} className={styles.courseLink}>
-                    <span>{year.title}</span>
-                    <span className={styles.arrow}>→</span>
-                  </Link>
+                  {year.id === 1 ? (
+                    <Link href={`/department/${year.id}`} className={styles.courseLink}>
+                      <span>{year.title}</span>
+                      <span className={styles.arrow}>→</span>
+                    </Link>
+                  ) : (
+                    <div className={`${styles.courseLink} ${styles.disabledLink}`}>
+                      <span>{year.title}</span>
+                      <span className={styles.comingSoon}>Coming Soon</span>
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>
