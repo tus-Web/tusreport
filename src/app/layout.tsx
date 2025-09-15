@@ -14,6 +14,16 @@ const notoSansJP = Noto_Sans_JP({
 export const metadata: Metadata = {
   title: "TUS Report",
   description: "TUS Report System",
+  icons: {
+    icon: [
+      {
+        url: "/assets/tus.genesis.svg",
+        type: "image/svg+xml",
+      },
+    ],
+    shortcut: "/assets/tus.genesis.svg",
+    apple: "/assets/tus.genesis.svg",
+  },
 };
 
 export default function RootLayout({
