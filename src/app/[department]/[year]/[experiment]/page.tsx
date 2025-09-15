@@ -128,7 +128,6 @@ export default function ExperimentDetailPage() {
     if (experimentSlug && experimentsBaseData[experimentSlug]) {
       const baseData = experimentsBaseData[experimentSlug];
       setExperiment({ ...baseData });
-      // 自動生成は行わず、ボタンで生成する
     } else {
       router.push('/department/1');
     }
