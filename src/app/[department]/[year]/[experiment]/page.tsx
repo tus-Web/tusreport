@@ -76,8 +76,8 @@ export default function ExperimentDetailPage() {
     'physical-pendulum': {
       id: '8',
       title: '第８回 実体振り子',
-      description: '振り子の周期と重力加速度の関係'
-      // excelFile: '実験8実体振り子エミュレータ.xlsx' // ファイルが存在しないためコメントアウト
+      description: '振り子の周期と重力加速度の関係',
+      excelFile: '実験8実体ふりこ.xlsx'
     },
     'string-resonance': {
       id: '9',
