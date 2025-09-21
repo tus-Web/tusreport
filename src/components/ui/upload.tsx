@@ -135,14 +135,14 @@ const Upload = React.forwardRef<HTMLDivElement, UploadProps>(
           children
         ) : (
           <span>
-            ドラッグ＆ドロップ、またはクリックしてファイルを選択
+            エクセルファイルをドラッグ＆ドロップ、またはクリックしてファイルを選択
             <br />
-            <span className="text-xs text-muted-foreground">
+            {/* <span className="text-xs text-muted-foreground">
               {accept
                 ? `対応形式: ${typeof accept === "string" ? accept : Object.keys(accept).join(", ")}`
                 : ""}
               {maxSize ? `　最大サイズ: ${(maxSize / 1024 / 1024).toFixed(1)}MB` : ""}
-            </span>
+            </span> */}
           </span>
         )}
       </div>

@@ -11,6 +11,7 @@ import { TexCodeDisplay } from '@/components/TexCodeDisplay';
 import { TexGenerationError } from '@/components/TexGenerationError';
 import { useTexGenerator } from '@/hooks/useTexGenerator';
 import styles from './experiment.module.css';
+import { EmblaCarousel } from '@/components/ui/EmblaCarousel'
 
 interface ExperimentData {
   id: string;
@@ -166,6 +167,46 @@ export default function ExperimentDetailPage() {
     console.log(file);
   }
 
+  // ステップデータの定義
+  const stepsData = useMemo(() => [
+    {
+      number: 1,
+      title: 'Excelファイルをダウンロード',
+      description: '実験データを記入するためのExcelファイルをダウンロードしてください',
+      imageSrc: '/assets/undraw_spreadsheets_bh6n.svg',
+      ctaText: 'Excelダウンロード',
+      ctaAction: handleDownloadExcel,
+      showUpload: false
+    },
+    {
+      number: 2,
+      title: 'ファイルをアップロード',
+      description: '記入したExcelファイルをアップロードしてください',
+      imageSrc: '/assets/undraw_upload_cucu.svg',
+      ctaText: 'ファイルを選択',
+      showUpload: true,
+      onUpload: handleUploadExcel
+    },
+    {
+      number: 3,
+      title: 'TeXコードを生成',
+      description: '「TeXコードを作成」ボタンを押してテンプレートを生成してください',
+      imageSrc: '/assets/undraw_artificial-intelligence_43qa.svg',
+      ctaText: experiment?.texCode ? '再生成' : 'TeXコードを作成',
+      ctaAction: experiment?.texCode ? handleRegenerateCode : handleGenerateCode,
+      showUpload: false
+    },
+    {
+      number: 4,
+      title: 'レポートを完成',
+      description: '生成されたコードをコピーしてレポートを完成させてください',
+      imageSrc: '/assets/undraw_report.svg',
+      ctaText: 'コピーする',
+      ctaAction: () => {},
+      showUpload: false
+    }
+  ], [experiment, handleDownloadExcel, handleGenerateCode, handleRegenerateCode, handleUploadExcel]);
+
   if (!isLoaded) {
     return (
       <div className={styles.container}>
@@ -183,10 +224,33 @@ export default function ExperimentDetailPage() {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
+        {/* 左上の戻るボタン */}
+        <div className={styles.backButtonContainer}>
+          <Link href="/department/1">
+            <Button variant="outline" className={styles.backButton}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M19 12H5" />
+                <polyline points="12 19 5 12 12 5" />
+              </svg>
+              <span className={styles.backButtonText}></span>実験一覧に戻る
+            </Button>
+          </Link>
+        </div>
+        
         <header className={styles.header}>
           <h1 className={styles.title}>{experiment.title}</h1>
           <p className={styles.description}>{experiment.description}</p>
-          <div style={{ marginTop: '0.75rem', display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+          {/* <div style={{ marginTop: '0.75rem', display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
             {!experiment.texCode ? (
               <Button onClick={handleGenerateCode} disabled={loading}>
                 {loading ? 'TeXコードを生成中...' : 'TeXコードを作成'}
@@ -198,9 +262,17 @@ export default function ExperimentDetailPage() {
             )}
             <Button onClick={handleDownloadExcel} variant="outline" disabled={loading || !experiment.excelFile}>
               Excelダウンロード
-            </Button>
-          </div>
+            </Button> */}
+          {/* </div> */}
         </header>
+
+
+        <EmblaCarousel 
+          steps={stepsData} 
+          isLoading={loading}
+          loadingMessage={experiment?.texCode ? "TeXコードを再生成中..." : "AI がTeXコードを生成中..."}
+        />
+
 
         {error && (
           <TexGenerationError 
@@ -218,99 +290,6 @@ export default function ExperimentDetailPage() {
             isLoading={loading}
           />
         )}
-
-        {!experiment.texCode && !loading && (
-          <>
-            <div className={styles.upload}>
-              <Card className={styles.uploadCard}>
-                <CardHeader>
-                  <CardTitle className={styles.uploadTitle}>
-                    Excelファイルアップロード
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Upload
-                    className={styles.uploadArea}
-                    onDrop={handleUploadExcel}
-                    accept={{ 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'] }}
-                    multiple={false}
-                  />
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className={styles.instructions}>
-              <Card className={styles.instructionCard}>
-                <CardHeader>
-                  <CardTitle className={styles.instructionTitle}>
-                    使い方の手順
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className={styles.stepsContainer}>
-                    <div className={styles.stepCard}>
-                      <div className={styles.stepNumber}>1</div>
-                      <div className={styles.stepTitle}>Excelファイルを<br/>ダウンロード</div>
-                      <div className={styles.stepDescription}>
-                        実験データを記入するためのExcelファイルをダウンロードしてください
-                      </div>
-                    </div>
-                    <div className={styles.stepCard}>
-                      <div className={styles.stepNumber}>2</div>
-                      <div className={styles.stepTitle}>データを記入</div>
-                      <div className={styles.stepDescription}>
-                        ダウンロードしたファイルに実験データを記入してください
-                      </div>
-                    </div>
-                    <div className={styles.stepCard}>
-                      <div className={styles.stepNumber}>3</div>
-                      <div className={styles.stepTitle}>ファイルを<br/>アップロード</div>
-                      <div className={styles.stepDescription}>
-                        記入したExcelファイルをアップロードしてください
-                      </div>
-                    </div>
-                    <div className={styles.stepCard}>
-                      <div className={styles.stepNumber}>4</div>
-                      <div className={styles.stepTitle}>TeXコードを生成</div>
-                      <div className={styles.stepDescription}>
-                        「TeXコードを作成」ボタンを押してテンプレートを生成してください
-                      </div>
-                    </div>
-                    <div className={styles.stepCard}>
-                      <div className={styles.stepNumber}>5</div>
-                      <div className={styles.stepTitle}>コピー</div>
-                      <div className={styles.stepDescription}>
-                        生成後、コードをコピーできます
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </>
-        )}
-
-        <div className={styles.navigation}>
-          <Link href="/department/1">
-            <Button variant="outline" className={styles.backButton}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M19 12H5" />
-                <polyline points="12 19 5 12 12 5" />
-              </svg>
-              実験一覧に戻る
-            </Button>
-          </Link>
-        </div>
       </div>
     </div>
   );

@@ -7,10 +7,61 @@
 .content {
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
+}
+
+/* 左上の戻るボタンコンテナ */
+.backButtonContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 20;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #3B82F6 !important;
+  border-radius: 8px;
+  color: #000000 !important;
+  font-size: 0.875rem !important;
+  font-weight: 700 !important;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.backButtonText {
+  color: black !important;
+  font-weight: bold;
+}
+
+.backButton:hover {
+  background: white;
+  border-color: #10B981;
+  color: #10B981 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+/* SVGアイコンも黒色にする */
+.backButton svg {
+  color: #000000 !important;
+  stroke: #000000 !important;
+}
+
+.backButton:hover svg {
+  color: #000000 !important;
+  stroke: #000000 !important;
 }
 
 .header {
   text-align: center;
+  margin-top: 4rem;
   margin-bottom: 3rem;
   animation: fadeInDown 0.8s ease-out;
 }

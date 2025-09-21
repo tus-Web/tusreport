@@ -44,6 +44,18 @@ export default function HomePage() {
             </p>
           </div>
 
+          {/* CTAボタンエリア */}
+          <div className={styles.ctaSection}>
+            <Link href="/department">
+              <CustomButton className={styles.ctaButton}>
+                レポート作成を始める
+              </CustomButton>
+            </Link>
+          </div>
+
+        </div>
+      </div>
+
           {/* できること・特徴のセクション */}
           <div className={styles.featuresContainer}>
             {/* できること */}
@@ -72,17 +84,6 @@ export default function HomePage() {
               </ul>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* CTAボタンエリア */}
-      <div className={styles.ctaSection}>
-        <Link href="/department">
-          <CustomButton className={styles.ctaButton}>
-            レポート作成を始める
-          </CustomButton>
-        </Link>
-      </div>
     </main>
   );
 } 
