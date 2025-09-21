@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Upload } from '@/components/ui/upload';
 import { TexCodeDisplay } from '@/components/TexCodeDisplay';
 import { TexGenerationError } from '@/components/TexGenerationError';
+import { TexResultModal } from '@/components/ui/TexResultModal';
 import { useTexGenerator } from '@/hooks/useTexGenerator';
 import styles from './experiment.module.css';
 import { EmblaCarousel } from '@/components/ui/EmblaCarousel'
@@ -29,6 +30,7 @@ export default function ExperimentDetailPage() {
   const { loading, error, generateTexCode } = useTexGenerator();
   
   const [experiment, setExperiment] = useState<ExperimentData | null>(null);
+  const [showTexModal, setShowTexModal] = useState(false);
 
   // 実験基本データの定義（スラッグをキーとして管理）
   const experimentsBaseData: Record<string, Omit<ExperimentData, 'texCode'>> = useMemo(() => ({
@@ -103,18 +105,32 @@ export default function ExperimentDetailPage() {
   // Gemini SDKを使用してPDFからTeX コードを生成
   const handleGenerateCode = async () => {
     if (experiment) {
+      console.log('Starting TeXcode generation...');
       const newTexCode = await generateTexCode(experiment.id);
       if (newTexCode) {
+        console.log('TeXcode generated successfully, setting state...');
         setExperiment(prev => prev ? { ...prev, texCode: newTexCode } : null);
+        // TeXコード生成直後にモーダルを表示
+        setTimeout(() => {
+          console.log('Showing modal...');
+          setShowTexModal(true);
+        }, 100);
       }
     }
   };
 
   const handleRegenerateCode = async () => {
     if (experiment) {
+      console.log('Starting TeXcode regeneration...');
       const newTexCode = await generateTexCode(experiment.id);
       if (newTexCode) {
+        console.log('TeXcode regenerated successfully, setting state...');
         setExperiment(prev => prev ? { ...prev, texCode: newTexCode } : null);
+        // TeXコード再生成直後にモーダルを表示
+        setTimeout(() => {
+          console.log('Showing modal...');
+          setShowTexModal(true);
+        }, 100);
       }
     }
   };
@@ -283,14 +299,30 @@ export default function ExperimentDetailPage() {
         )}
 
         {experiment.texCode && (
-          <TexCodeDisplay 
-            texCode={experiment.texCode}
-            experimentId={experiment.id}
-            onRegenerate={handleRegenerateCode}
-            isLoading={loading}
-          />
+          <>
+            {console.log('Modal state:', showTexModal, 'TexCode exists:', !!experiment.texCode)}
+            <TexResultModal
+              isOpen={showTexModal}
+              onClose={() => {
+                console.log('Closing modal...');
+                setShowTexModal(false);
+              }}
+              texCode={experiment.texCode}
+              experimentTitle={experiment.title}
+              onRegenerate={handleRegenerateCode}
+              isLoading={loading}
+            />
+            {/* <TexCodeDisplay 
+              texCode={experiment.texCode}
+              experimentId={experiment.id}
+              onRegenerate={handleRegenerateCode}
+              isLoading={loading}
+            /> */}
+          </>
         )}
       </div>
     </div>
   );
 }
+
+
