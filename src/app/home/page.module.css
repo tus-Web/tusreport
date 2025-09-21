@@ -1,0 +1,206 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: calc(100vh - var(--header-height, 64px)); /* CSS変数を使用 */
+  max-height: calc(100vh - var(--header-height, 64px));
+  padding: 2rem 4rem;
+  overflow: hidden;
+}
+
+.mainContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  gap: 4rem;
+  max-height: calc(100vh - var(--header-height, 64px) - 200px); /* ヘッダー高さ + CTAエリアのための余白を引く */
+}
+
+.imageSection {
+  flex: 0 0 45%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.contentSection {
+  flex: 0 0 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.titleSection h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #1f2937;
+  line-height: 1.2;
+}
+
+.titleSection p {
+  font-size: 1.4rem;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+.featuresContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.featureCard {
+  background: #f9fafb;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.featureCard h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #10b981;
+}
+
+.featureCard ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.featureCard li {
+  padding: 0.4rem 0;
+  display: flex;
+  align-items: center;
+}
+
+.checkIcon {
+  color: #10b981;
+  margin-right: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.featureText {
+  font-size: 0.95rem;
+}
+
+.ctaSection {
+  display: flex;
+  justify-content: center;
+  padding-top: 2rem;
+  padding-bottom: 1rem;
+}
+
+.ctaButton {
+    color: #667eea;
+}
+
+/* タブレット向けレスポンシブ */
+@media (max-width: 1024px) {
+  .container {
+    padding: 1.5rem 2rem;
+  }
+
+  .mainContent {
+    gap: 2rem;
+  }
+
+  .titleSection h1 {
+    font-size: 2.5rem;
+  }
+
+  .titleSection p {
+    font-size: 1.2rem;
+  }
+}
+
+/* モバイル向けレスポンシブ */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+    min-height: calc(100vh - var(--header-height, 64px)); /* CSS変数を使用 */
+    max-height: none;
+    overflow: visible;
+  }
+
+  .mainContent {
+    flex-direction: column;
+    gap: 2rem;
+    max-height: none;
+    text-align: center;
+  }
+
+  .imageSection {
+    flex: none;
+    order: 1;
+  }
+
+  .contentSection {
+    flex: none;
+    order: 2;
+  }
+
+  .titleSection h1 {
+    font-size: 2rem;
+    line-height: 1.3;
+  }
+
+  .titleSection p {
+    font-size: 1.1rem;
+  }
+
+  .featuresContainer {
+    gap: 1rem;
+  }
+
+  .featureCard {
+    padding: 1rem;
+  }
+
+  .featureCard h2 {
+    font-size: 1.1rem;
+  }
+
+  .featureText {
+    font-size: 0.9rem;
+  }
+
+  .ctaSection {
+    order: 3;
+    padding-top: 1.5rem;
+  }
+
+  .ctaButton {
+    font-size: 1.1rem;
+    padding: 0.8rem 2rem;
+    color: var(--color-accent-legacy-primary);
+  }
+}
+
+/* 小さいモバイル向け */
+@media (max-width: 480px) {
+  .container {
+    padding: 0.5rem;
+  }
+
+  .titleSection h1 {
+    font-size: 1.8rem;
+  }
+
+  .titleSection p {
+    font-size: 1rem;
+  }
+
+  .featureCard {
+    padding: 0.8rem;
+  }
+
+  .ctaButton {
+    font-size: 1rem;
+    padding: 0.7rem 1.5rem;
+    color: var(--color-accent-legacy-primary);
+  }
+}

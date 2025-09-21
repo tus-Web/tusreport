@@ -8,6 +8,9 @@
 
 @layer base {
   :root {
+    /* レイアウト変数 */
+    --header-height: 64px; /* ヘッダーの高さを定義 */
+    
     /* カスタムカラー変数（Color.tsから） */
     --color-background-primary: #ffffff;
     --color-background-card: #ffffff;

@@ -1,0 +1,74 @@
+/* From Uiverse.io by talhabangyal */ 
+.button {
+  cursor: pointer;
+  font-weight: 700;
+  font-family: Helvetica, "sans-serif";
+  transition: all 0.2s;
+  padding: 15px 25px;
+  border-radius: 100px;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.button.primary {
+  background: #667eea;
+}
+
+.button.primary:hover {
+  background: #5a67d8;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.3);
+}
+
+.button.secondary {
+  background: #0400ff;
+}
+
+.button.secondary:hover {
+  background: #0300dd;
+}
+
+.text {
+  color: #fff;
+  margin-right: 10px;
+}
+
+.arrow {
+  width: 34px;
+  transition: transform 0.3s ease-in-out;
+  flex-shrink: 0;
+}
+
+.button:hover .arrow {
+  transform: translateX(5px);
+}
+
+.button:active {
+  transform: scale(0.95);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .button {
+    font-size: 16px;
+    padding: 12px 20px;
+  }
+  
+  .arrow {
+    width: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .button {
+    font-size: 14px;
+    padding: 10px 18px;
+  }
+  
+  .arrow {
+    width: 24px;
+  }
+}

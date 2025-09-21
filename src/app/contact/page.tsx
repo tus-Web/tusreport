@@ -21,7 +21,7 @@ export default function ContactPage() {
         
         <div style={{ background: '#f9fafb', padding: '2rem', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)' }}>
           <p style={{ fontSize: '1.1rem', color: '#6b7280', marginBottom: '1.5rem' }}>
-            ご質問やご意見がございましたら、以下のメールアドレスまでご連絡ください。
+            ご質問やご意見がございましたら、<br />以下のメールアドレスまでご連絡ください。
           </p>
           <div style={{ background: '#10b981', color: 'white', padding: '1rem', borderRadius: '8px', display: 'inline-block' }}>
             <a 
