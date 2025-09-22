@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useSignUp } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { validateTusEmail } from '@/lib/validations';
 
 export default function SignUpPage() {
@@ -71,11 +72,11 @@ export default function SignUpPage() {
 
       await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
       setPendingVerification(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Sign up error:', err);
       
-      if (err.errors) {
-        const clerkErrors = err.errors[0];
+      if (err && typeof err === 'object' && 'errors' in err) {
+        const clerkErrors = (err as { errors: Array<{ code: string }> }).errors[0];
         if (clerkErrors.code === 'form_password_pwned') {
           setErrors({
             password: 'このパスワードは安全ではありません。別のパスワードを使用してください。'
@@ -126,11 +127,11 @@ export default function SignUpPage() {
       } else {
         console.log('Verification status:', completeSignUp.status);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Verification error:', err);
       
-      if (err.errors) {
-        const clerkErrors = err.errors[0];
+      if (err && typeof err === 'object' && 'errors' in err) {
+        const clerkErrors = (err as { errors: Array<{ code: string }> }).errors[0];
         if (clerkErrors.code === 'form_code_incorrect') {
           setErrors({
             verificationCode: '認証コードが正しくありません'
@@ -468,7 +469,7 @@ export default function SignUpPage() {
           color: '#6b7280'
         }}>
           既にアカウントをお持ちの場合は{' '}
-          <a
+          <Link
             href="/sign-in"
             style={{
               color: '#3b82f6',
@@ -477,7 +478,7 @@ export default function SignUpPage() {
             }}
           >
             サインイン
-          </a>
+          </Link>
         </div>
       </div>
     </div>

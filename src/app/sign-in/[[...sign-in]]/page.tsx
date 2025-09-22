@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useSignIn } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { validateTusEmail } from '@/lib/validations';
 
 export default function SignInPage() {
@@ -55,12 +56,12 @@ export default function SignInPage() {
         // Handle other statuses if needed
         console.log('Sign in status:', result.status);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Sign in error:', err);
       
       // Clerk固有のエラーを日本語に変換
-      if (err.errors) {
-        const clerkErrors = err.errors[0];
+      if (err && typeof err === 'object' && 'errors' in err) {
+        const clerkErrors = (err as { errors: Array<{ code: string }> }).errors[0];
         if (clerkErrors.code === 'form_identifier_not_found') {
           setErrors({
             email: 'このメールアドレスは登録されていません'
@@ -282,22 +283,16 @@ export default function SignInPage() {
           color: '#6b7280'
         }}>
           アカウントをお持ちでない場合は{' '}
-          <a
+          <Link
             href="/sign-up"
             style={{
               color: '#3b82f6',
               textDecoration: 'none',
               fontWeight: '500'
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.textDecoration = 'underline';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.textDecoration = 'none';
-            }}
           >
             サインアップ
-          </a>
+          </Link>
         </div>
       </div>
     </div>
