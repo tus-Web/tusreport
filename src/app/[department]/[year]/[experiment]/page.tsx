@@ -5,14 +5,12 @@ import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Upload } from '@/components/ui/upload';
-import { TexCodeDisplay } from '@/components/TexCodeDisplay';
 import { TexGenerationError } from '@/components/TexGenerationError';
 import { TexResultModal } from '@/components/ui/TexResultModal';
 import { useTexGenerator } from '@/hooks/useTexGenerator';
 import styles from './experiment.module.css';
 import { EmblaCarousel } from '@/components/ui/EmblaCarousel'
+import useEmblaCarousel from 'embla-carousel-react';
 
 interface ExperimentData {
   id: string;
@@ -31,6 +29,8 @@ export default function ExperimentDetailPage() {
   
   const [experiment, setExperiment] = useState<ExperimentData | null>(null);
   const [showTexModal, setShowTexModal] = useState(false);
+
+  const [emblaRef, emblaApi] = useEmblaCarousel();
 
   // 実験基本データの定義（スラッグをキーとして管理）
   const experimentsBaseData: Record<string, Omit<ExperimentData, 'texCode'>> = useMemo(() => ({
@@ -115,6 +115,9 @@ export default function ExperimentDetailPage() {
           console.log('Showing modal...');
           setShowTexModal(true);
         }, 100);
+        if (emblaApi) {
+          emblaApi.scrollNext();
+        }
       }
     }
   };
