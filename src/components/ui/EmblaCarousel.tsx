@@ -18,22 +18,27 @@ interface StepData {
   onUpload?: (files: File[]) => void;
 }
 
+interface UploadedExcelData {
+  fileName: string;
+  sheetName: string;
+  uploadedAt: string;
+  data?: Record<string, unknown>;
+}
+
 interface EmblaCarouselProps {
   steps: StepData[];
   isLoading?: boolean;
   loadingMessage?: string;
-  uploadedExcelData?: any;
+  uploadedExcelData?: UploadedExcelData | null;
   uploadError?: string | null;
 }
 
 export function EmblaCarousel({ steps, isLoading = false, loadingMessage, uploadedExcelData, uploadError }: EmblaCarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel();
-  const [uploadedFiles, setUploadedFiles] = React.useState<File[]>([]);
 
   // ファイルが選択されたときに呼ばれる関数
   const handleFileSelect = (files: File[]) => {
     console.log("選択されたファイル:", files);
-    setUploadedFiles(files);
     
     // ファイルアップロード後、1秒後に次のカードに移動
     setTimeout(() => {

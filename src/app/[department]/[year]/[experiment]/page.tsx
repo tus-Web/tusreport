@@ -2,15 +2,14 @@
 
 import { useUser } from '@clerk/nextjs';
 import { useRouter, useParams } from 'next/navigation';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { TexGenerationError } from '@/components/TexGenerationError';
 import { TexResultModal } from '@/components/ui/TexResultModal';
 import { useTexGenerator } from '@/hooks/useTexGenerator';
 import styles from './experiment.module.css';
-import { EmblaCarousel } from '@/components/ui/EmblaCarousel'
-import useEmblaCarousel from 'embla-carousel-react';
+import { EmblaCarousel } from '@/components/ui/EmblaCarousel';
 
 interface ExperimentData {
   id: string;
@@ -18,6 +17,13 @@ interface ExperimentData {
   description: string;
   excelFile?: string;
   texCode?: string;
+}
+
+interface UploadedExcelData {
+  fileName: string;
+  sheetName: string;
+  uploadedAt: string;
+  data?: Record<string, unknown>;
 }
 
 export default function ExperimentDetailPage() {
@@ -29,10 +35,8 @@ export default function ExperimentDetailPage() {
   
   const [experiment, setExperiment] = useState<ExperimentData | null>(null);
   const [showTexModal, setShowTexModal] = useState(false);
-  const [uploadedExcelData, setUploadedExcelData] = useState<any>(null);
+  const [uploadedExcelData, setUploadedExcelData] = useState<UploadedExcelData | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
-
-  const [emblaRef, emblaApi] = useEmblaCarousel();
 
   // 実験基本データの定義（スラッグをキーとして管理）
   const experimentsBaseData: Record<string, Omit<ExperimentData, 'texCode'>> = useMemo(() => ({
@@ -105,10 +109,10 @@ export default function ExperimentDetailPage() {
   }), []);
 
   // Gemini SDKを使用してPDFからTeX コードを生成
-  const handleGenerateCode = async () => {
+  const handleGenerateCode = useCallback(async () => {
     if (experiment) {
       console.log('Starting TeXcode generation...');
-      const newTexCode = await generateTexCode(experiment.id, uploadedExcelData);
+      const newTexCode = await generateTexCode(experiment.id, uploadedExcelData || undefined);
       if (newTexCode) {
         console.log('TeXcode generated successfully, setting state...');
         setExperiment(prev => prev ? { ...prev, texCode: newTexCode } : null);
@@ -117,17 +121,14 @@ export default function ExperimentDetailPage() {
           console.log('Showing modal...');
           setShowTexModal(true);
         }, 100);
-        if (emblaApi) {
-          emblaApi.scrollNext();
-        }
       }
     }
-  };
+  }, [experiment, generateTexCode, uploadedExcelData]);
 
-  const handleRegenerateCode = async () => {
+  const handleRegenerateCode = useCallback(async () => {
     if (experiment) {
       console.log('Starting TeXcode regeneration...');
-      const newTexCode = await generateTexCode(experiment.id, uploadedExcelData);
+      const newTexCode = await generateTexCode(experiment.id, uploadedExcelData || undefined);
       if (newTexCode) {
         console.log('TeXcode regenerated successfully, setting state...');
         setExperiment(prev => prev ? { ...prev, texCode: newTexCode } : null);
@@ -138,7 +139,7 @@ export default function ExperimentDetailPage() {
         }, 100);
       }
     }
-  };
+  }, [experiment, generateTexCode, uploadedExcelData]);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -155,7 +156,7 @@ export default function ExperimentDetailPage() {
     }
   }, [isLoaded, isSignedIn, router, experimentSlug, experimentsBaseData]);
 
-  const handleDownloadExcel = async () => {
+  const handleDownloadExcel = useCallback(async () => {
     if (experiment?.excelFile) {
       try {
         const fileName = experiment.excelFile;
@@ -179,9 +180,9 @@ export default function ExperimentDetailPage() {
         alert('ファイルのダウンロードに失敗しました。しばらく時間をおいて再度お試しください。');
       }
     }
-  };
+  }, [experiment?.excelFile]);
 
-  const handleUploadExcel = async (acceptedFiles: File[]) => {
+  const handleUploadExcel = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
     const file = acceptedFiles[0];
     
@@ -219,7 +220,7 @@ export default function ExperimentDetailPage() {
       const errorMessage = error instanceof Error ? error.message : 'Excelファイルのアップロードに失敗しました。';
       setUploadError(errorMessage);
     }
-  }
+  }, [experiment]);
 
   // ステップデータの定義
   const stepsData = useMemo(() => [
