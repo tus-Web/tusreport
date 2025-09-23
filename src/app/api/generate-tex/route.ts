@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
 
     const genAI = new GoogleGenAI({ apiKey });
 
-    const { experimentId } = await request.json();
+    const { experimentId, excelData } = await request.json();
 
     if (!experimentId) {
       return NextResponse.json(
@@ -65,14 +65,20 @@ export async function POST(request: NextRequest) {
     const pdfBase64 = pdfBuffer.toString('base64');
 
     // 実験に応じたプロンプトを生成
-    const promptText = 
+    let promptText = 
     `このPDFファイルの指示通りに、実験のLaTeXレポートテンプレートを生成してください。以下の要件に従ってください：
     1. 日本語でのレポート形式
     2. 実験の目的、理論、方法、結果、考察、結論のセクションを含む
     3. 必要な数式や図表の挿入位置を示す
     4. 実験データを記入できる表やグラフの雛形を含む
-    5. 参考文献の記載方法を示す
-    生成するのはLaTeXコードのみで、説明文は不要です。`;
+    5. 参考文献の記載方法を示す`;
+
+    // Excelデータが提供されている場合、プロンプトに追加
+    if (excelData && excelData.data) {
+      promptText += `\n\n追加情報: 学生が記入したExcelファイルの実験データ:\n${JSON.stringify(excelData.data, null, 2)}\n\nこのデータを参考にして、具体的な数値や計算結果をレポートテンプレートに組み込んでください。`;
+    }
+
+    promptText += `\n\n生成するのはLaTeXコードのみで、説明文は不要です。`;
 
     // Gemini APIを呼び出し
     const contents = [

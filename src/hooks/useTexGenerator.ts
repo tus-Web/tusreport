@@ -3,7 +3,7 @@ import { useState } from 'react';
 interface UseTexGeneratorResult {
   loading: boolean;
   error: string | null;
-  generateTexCode: (expId: string) => Promise<string | null>;
+  generateTexCode: (expId: string, excelData?: any) => Promise<string | null>;
 }
 
 export const useTexGenerator = (): UseTexGeneratorResult => {
@@ -11,18 +11,24 @@ export const useTexGenerator = (): UseTexGeneratorResult => {
   const [error, setError] = useState<string | null>(null);
 
   // API エンドポイントを使用してTeX コードを生成
-  const generateTexCode = async (expId: string): Promise<string | null> => {
+  const generateTexCode = async (expId: string, excelData?: any): Promise<string | null> => {
     console.log('generateTexCode called with expId:', expId);
+    console.log('generateTexCode called with excelData:', excelData);
     setLoading(true);
     setError(null);
     
     try {
+      const requestBody: any = { experimentId: expId };
+      if (excelData) {
+        requestBody.excelData = excelData;
+      }
+
       const response = await fetch('/api/generate-tex', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ experimentId: expId }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {

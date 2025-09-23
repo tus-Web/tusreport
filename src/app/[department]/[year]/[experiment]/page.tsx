@@ -29,6 +29,8 @@ export default function ExperimentDetailPage() {
   
   const [experiment, setExperiment] = useState<ExperimentData | null>(null);
   const [showTexModal, setShowTexModal] = useState(false);
+  const [uploadedExcelData, setUploadedExcelData] = useState<any>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const [emblaRef, emblaApi] = useEmblaCarousel();
 
@@ -106,7 +108,7 @@ export default function ExperimentDetailPage() {
   const handleGenerateCode = async () => {
     if (experiment) {
       console.log('Starting TeXcode generation...');
-      const newTexCode = await generateTexCode(experiment.id);
+      const newTexCode = await generateTexCode(experiment.id, uploadedExcelData);
       if (newTexCode) {
         console.log('TeXcode generated successfully, setting state...');
         setExperiment(prev => prev ? { ...prev, texCode: newTexCode } : null);
@@ -125,7 +127,7 @@ export default function ExperimentDetailPage() {
   const handleRegenerateCode = async () => {
     if (experiment) {
       console.log('Starting TeXcode regeneration...');
-      const newTexCode = await generateTexCode(experiment.id);
+      const newTexCode = await generateTexCode(experiment.id, uploadedExcelData);
       if (newTexCode) {
         console.log('TeXcode regenerated successfully, setting state...');
         setExperiment(prev => prev ? { ...prev, texCode: newTexCode } : null);
@@ -179,11 +181,44 @@ export default function ExperimentDetailPage() {
     }
   };
 
-  const handleUploadExcel = (acceptedFiles: File[]) => {
+  const handleUploadExcel = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
     const file = acceptedFiles[0];
     
-    console.log(file);
+    if (!experiment) {
+      console.error('Experiment not found');
+      setUploadError('実験情報が見つかりません');
+      return;
+    }
+
+    setUploadError(null); // エラーをクリア
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('experimentId', experiment.id);
+
+      const response = await fetch('/api/upload-excel', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'ファイルのアップロードに失敗しました');
+      }
+
+      const result = await response.json();
+      console.log('Excel upload successful:', result);
+      
+      // アップロードされたExcelデータを保存
+      setUploadedExcelData(result.data);
+      
+    } catch (error) {
+      console.error('Excel upload error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Excelファイルのアップロードに失敗しました。';
+      setUploadError(errorMessage);
+    }
   }
 
   // ステップデータの定義
@@ -290,6 +325,8 @@ export default function ExperimentDetailPage() {
           steps={stepsData} 
           isLoading={loading}
           loadingMessage={experiment?.texCode ? "TeXコードを再生成中..." : "AI がTeXコードを生成中..."}
+          uploadedExcelData={uploadedExcelData}
+          uploadError={uploadError}
         />
 
 

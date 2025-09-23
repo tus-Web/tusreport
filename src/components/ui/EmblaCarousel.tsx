@@ -22,9 +22,11 @@ interface EmblaCarouselProps {
   steps: StepData[];
   isLoading?: boolean;
   loadingMessage?: string;
+  uploadedExcelData?: any;
+  uploadError?: string | null;
 }
 
-export function EmblaCarousel({ steps, isLoading = false, loadingMessage }: EmblaCarouselProps) {
+export function EmblaCarousel({ steps, isLoading = false, loadingMessage, uploadedExcelData, uploadError }: EmblaCarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel();
   const [uploadedFiles, setUploadedFiles] = React.useState<File[]>([]);
 
@@ -103,25 +105,31 @@ export function EmblaCarousel({ steps, isLoading = false, loadingMessage }: Embl
                     {/* 下部のCTAボタンまたはUploadコンポーネント */}
                     <div className={style.ctaContainer}>
                       {step.showUpload ? (
-                        uploadedFiles.length === 0 ? (
-                          <div className={style.uploadWrapper}>
-                            <Upload
-                              className={style.uploadComponent}
-                              accept={{ 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'] }}
-                              multiple={false}
-                              onDrop={step.onUpload || handleFileSelect}
-                              onFileSelect={handleFileSelect}
-                            />
-                          </div>
-                        ) : (
+                        uploadedExcelData ? (
                           <div className={style.uploadedFiles}>
                             <h4>ファイルのアップロードに成功しました！</h4>
-                            <ul>
-                              {uploadedFiles.map((file) => (
-                                <li key={file.name}>{file.name}</li>
-                              ))}
-                            </ul>
+                            <p>ファイル名: {uploadedExcelData.fileName}</p>
+                            <p>シート名: {uploadedExcelData.sheetName}</p>
+                            <p>アップロード日時: {new Date(uploadedExcelData.uploadedAt).toLocaleString()}</p>
                           </div>
+                        ) : (
+                          <>
+                            <div className={style.uploadWrapper}>
+                              <Upload
+                                className={style.uploadComponent}
+                                accept={{ 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'] }}
+                                multiple={false}
+                                onDrop={step.onUpload || handleFileSelect}
+                                onFileSelect={handleFileSelect}
+                              />
+                            </div>
+                            {uploadError && (
+                              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
+                                <p className="text-red-700 text-sm font-medium">エラー</p>
+                                <p className="text-red-600 text-sm">{uploadError}</p>
+                              </div>
+                            )}
+                          </>
                         )
                       ) : (
                       <Button
