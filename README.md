@@ -1,8 +1,10 @@
-# 最小限の機能
+# tusreport
 
-## 🌐 デプロイ
+## 🌐 公開サイト
 
-Vercelでのデプロイ対応。`vercel.json` を追加済み。
+**[→ サイトを開く](https://tusreport.vercel.app)**
+
+Vercelでデプロイ済み。`vercel.json` を追加済み。
 
 ボタンを押したら、レポートテンプレートをコピーできるようにする
 
@@ -11,4 +13,5 @@ Vercelでのデプロイ対応。`vercel.json` を追加済み。
 home  
 学科を選べる、情報工学科1年のページリンク  
 detail  
+
 
